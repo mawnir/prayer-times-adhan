@@ -1,0 +1,6 @@
+{
+  "name": "Prayer Times & Adhan",
+  "description": "Multi-location Islamic prayer times schedule for the upcoming week with customizable adhan notifications, Qibla, and audio alerts.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
