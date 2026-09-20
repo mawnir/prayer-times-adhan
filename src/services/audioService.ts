@@ -73,13 +73,8 @@ class AudioService {
         this.playGentleBeep(ctx, masterGain, cleanup);
       } else if (type === 'spiritual_chime') {
         this.playSpiritualChime(ctx, masterGain, cleanup);
-      } else if (type === 'takbeer') {
-        this.playTakbeerChant(ctx, masterGain, cleanup, () => isCancelled, timeouts);
-      } else if (type === 'madinah_adhan') {
-        this.playMadinahMelody(ctx, masterGain, cleanup, () => isCancelled, timeouts);
       } else {
-        // default makkah_adhan
-        this.playMakkahAdhan(ctx, masterGain, cleanup, () => isCancelled, timeouts);
+        this.playMp3Adhan(ctx, masterGain, cleanup, () => isCancelled, timeouts);
       }
     } catch (e) {
       console.error('Failed to play adhan audio:', e);
@@ -206,99 +201,35 @@ class AudioService {
     osc2.stop(startTime + duration);
   }
 
-  private playTakbeerChant(
+  private playMp3Adhan(
     ctx: AudioContext,
     destination: GainNode,
     onFinish: () => void,
     isCancelled: () => boolean,
     timeouts: number[]
-  ) {
-    // Canonical Takbeer phrase:
-    // Al-la-hu Ak-bar, Al-la-hu Ak-bar
-    // Notes in Bayati maqam: D4 (293.66), F4 (349.23), G4 (392.00), A4 (440.00), G4, F4, D4
-    const D = 293.66;
-    const EhalfFlat = 315.0;
-    const F = 349.23;
-    const G = 392.00;
-    const A = 440.00;
-
-    const melody = [
-      { freq: D, dur: 0.5 },
-      { freq: G, dur: 1.0 },
-      { freq: A, dur: 0.8 },
-      { freq: G, dur: 1.4 },
-      { freq: F, dur: 0.6 },
-      { freq: EhalfFlat, dur: 0.8 },
-      { freq: D, dur: 1.8 },
-      // Pause
-      { freq: 0, dur: 0.4 },
-      // Second Takbeer
-      { freq: D, dur: 0.5 },
-      { freq: G, dur: 1.2 },
-      { freq: A, dur: 0.9 },
-      { freq: G, dur: 1.5 },
-      { freq: F, dur: 0.6 },
-      { freq: EhalfFlat, dur: 0.7 },
-      { freq: D, dur: 2.2 },
-    ];
-
-    let currentT = ctx.currentTime + 0.05;
-    melody.forEach(note => {
-      if (note.freq > 0) {
-        this.playVocalNote(ctx, destination, note.freq, currentT, note.dur, true);
-      }
-      currentT += note.dur;
-    });
-
-    const totalDurMs = (currentT - ctx.currentTime + 0.2) * 1000;
-    const tId = window.setTimeout(() => {
-      if (!isCancelled()) {
-        onFinish();
-      }
-    }, totalDurMs);
-    timeouts.push(tId);
-  }
-
-  private playMadinahMelody(
-    ctx: AudioContext,
-    destination: GainNode,
-    onFinish: () => void,
-    isCancelled: () => boolean,
-    timeouts: number[]
-  ) {
-    // Soothing meditative Rast maqam melody
-    const C = 261.63;
-    const D = 293.66;
-    const EhalfFlat = 315.0;
-    const F = 349.23;
-    const G = 392.00;
-    const A = 440.00;
-
-    const notes = [
-      { freq: C, dur: 0.8 },
-      { freq: D, dur: 0.7 },
-      { freq: EhalfFlat, dur: 1.1 },
-      { freq: F, dur: 0.8 },
-      { freq: G, dur: 1.6 },
-      { freq: F, dur: 0.6 },
-      { freq: EhalfFlat, dur: 0.8 },
-      { freq: D, dur: 1.2 },
-      { freq: C, dur: 2.0 },
-    ];
-
-    let currentT = ctx.currentTime + 0.05;
-    notes.forEach(note => {
-      this.playVocalNote(ctx, destination, note.freq, currentT, note.dur, true);
-      currentT += note.dur;
-    });
-
-    const totalDurMs = (currentT - ctx.currentTime + 0.2) * 1000;
-    const tId = window.setTimeout(() => {
-      if (!isCancelled()) {
-        onFinish();
-      }
-    }, totalDurMs);
-    timeouts.push(tId);
+  ): void {
+    fetch('/adhan_aud.mp3')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.arrayBuffer();
+      })
+      .then((data) => ctx.decodeAudioData(data))
+      .then((buffer) => {
+        if (isCancelled()) return;
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(destination);
+        source.onended = () => {
+          if (!isCancelled()) onFinish();
+        };
+        source.start();
+      })
+      .catch((err) => {
+        console.error('Failed to load adhan_aud.mp3:', err);
+        if (!isCancelled()) {
+          this.playMakkahAdhan(ctx, destination, onFinish, isCancelled, timeouts);
+        }
+      });
   }
 
   private playMakkahAdhan(
