@@ -45,11 +45,7 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-900 via-teal-950 to-slate-950 border border-emerald-700/40 p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/40">
-      
-      {/* Subtle Islamic geometric background aura */}
-      <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-64 h-64 rounded-full bg-teal-500/10 blur-3xl pointer-events-none" />
+    <div className="relative overflow-hidden rounded-3xl bg-emerald-950 border border-emerald-700/40 p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/40">
 
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         
@@ -118,7 +114,7 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
             </div>
             <div className="h-2 w-full rounded-full bg-emerald-950/80 border border-emerald-800/50 overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-teal-300 rounded-full transition-all duration-1000 ease-out"
+                className="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-out"
                 style={{ width: `${Math.max(5, status.progressPercent)}%` }}
               />
             </div>
@@ -128,7 +124,7 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
 
         {/* Right column: Large Countdown Timer Card & Quick Adhan Control */}
         <div className="flex flex-col items-center sm:items-end justify-center">
-          <div className="w-full sm:w-auto p-5 rounded-2xl bg-emerald-950/70 border border-emerald-700/50 backdrop-blur-md shadow-inner flex flex-col items-center text-center">
+          <div className="w-full sm:w-auto p-5 rounded-2xl bg-emerald-950 border border-emerald-700/50 shadow-inner flex flex-col items-center text-center">
             
             <span className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
               Time Remaining

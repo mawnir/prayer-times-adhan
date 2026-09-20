@@ -42,7 +42,7 @@ export const QiblaModal: React.FC<QiblaModalProps> = ({
   const distanceKm = getDistanceKm(location.latitude, location.longitude, 21.4225, 39.8262);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 animate-in fade-in duration-150">
       <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col text-center">
         
         {/* Header */}

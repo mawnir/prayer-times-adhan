@@ -33,12 +33,8 @@ export const ActiveAdhanModal: React.FC<ActiveAdhanModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-emerald-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg rounded-3xl bg-gradient-to-b from-emerald-900 via-teal-950 to-slate-950 border border-emerald-500/40 p-6 sm:p-8 text-white shadow-2xl overflow-hidden text-center space-y-6">
-        
-        {/* Decorative background glow */}
-        <div className="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-12 -right-12 w-48 h-48 rounded-full bg-teal-500/20 blur-3xl pointer-events-none" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-emerald-950 animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg rounded-3xl bg-emerald-950 border border-emerald-500/40 p-6 sm:p-8 text-white shadow-2xl overflow-hidden text-center space-y-6">
 
         {/* Close icon */}
         <button

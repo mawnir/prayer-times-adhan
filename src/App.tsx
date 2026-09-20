@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import confetti from 'canvas-confetti';
 import { 
   ActiveAdhanAlert, 
   AdhanSoundType, 
@@ -294,19 +293,6 @@ export default function App() {
   // Trigger Full Test Adhan Notification
   const handleTestAdhan = () => {
     const fardhPrayer = (prayerStatus.nextPrayer === 'sunrise' ? 'fajr' : prayerStatus.nextPrayer) as FardhPrayerKey;
-    const config = notificationSettings.perPrayer[fardhPrayer] || notificationSettings.perPrayer.fajr;
-    
-    // Confetti effect for celebratory launch
-    try {
-      confetti({
-        particleCount: 40,
-        spread: 60,
-        origin: { y: 0.7 },
-        colors: ['#059669', '#10b981', '#34d399', '#fbbf24']
-      });
-    } catch {
-      // ignore
-    }
 
     NotificationService.triggerAlert(
       fardhPrayer,

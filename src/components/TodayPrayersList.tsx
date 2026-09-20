@@ -113,7 +113,7 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
           // Border & Background style based on status
           let cardStyle = 'bg-white/80 border-slate-200/80 text-slate-800 hover:border-emerald-300';
           if (status === 'next') {
-            cardStyle = 'bg-gradient-to-br from-emerald-50 to-teal-50/50 border-emerald-500 shadow-md shadow-emerald-500/10 ring-2 ring-emerald-500/20 text-emerald-950';
+            cardStyle = 'bg-emerald-50 border-emerald-500 shadow-md shadow-emerald-500/10 ring-2 ring-emerald-500/20 text-emerald-950';
           } else if (status === 'current') {
             cardStyle = 'bg-emerald-900/5 border-emerald-400 text-emerald-900';
           }

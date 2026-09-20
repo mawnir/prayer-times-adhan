@@ -41,14 +41,14 @@ export const Header: React.FC<HeaderProps> = ({
   onChangeViewMode,
 }) => {
   return (
-    <header className="sticky top-0 z-30 bg-emerald-950/85 backdrop-blur-md border-b border-emerald-800/40 text-emerald-50">
+    <header className="sticky top-0 z-30 bg-emerald-950 border-b border-emerald-800/40 text-emerald-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           
           {/* Logo & Title */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-800 flex items-center justify-center shadow-md shadow-emerald-950/50 border border-emerald-500/30">
+              <div className="w-10 h-10 rounded-xl bg-emerald-700 flex items-center justify-center shadow-md shadow-emerald-950/50 border border-emerald-500/30">
                 <span className="text-xl">🕌</span>
               </div>
               <div>
