@@ -1,20 +1,8 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Prayer Times App 
 
-# Run and deploy your AI Studio app
+A beautifully designed prayer times and adhan app that displays accurate prayer times for a given location, along with useful Islamic features.
 
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/6740188c-1f36-41e7-988f-4036b08d48e0
-
-## Run Locally
-
-**Prerequisites:**  Node.js
+## Features
 
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+

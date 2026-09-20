@@ -1,18 +1,21 @@
 import React from 'react';
-import { 
-  MapPin, 
-  Bell, 
-  Settings, 
-  Compass, 
-  Volume2, 
+import {
+  MapPin,
+  Bell,
+  Settings,
+  Compass,
+  Volume2,
   VolumeX,
   Globe,
-  SunMoon
+  Mosque,
+  ChevronDown
 } from 'lucide-react';
 import { LocationItem, NotificationSettings } from '../types';
 
 interface HeaderProps {
   activeLocation: LocationItem;
+  locations: LocationItem[];
+  onSelectLocation: (loc: LocationItem) => void;
   onOpenLocationModal: () => void;
   onOpenNotificationModal: () => void;
   onOpenSettingsModal: () => void;
@@ -23,6 +26,8 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   activeLocation,
+  locations,
+  onSelectLocation,
   onOpenLocationModal,
   onOpenNotificationModal,
   onOpenSettingsModal,
@@ -32,14 +37,26 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const isMuted = notificationSettings.volume === 0 || !notificationSettings.masterEnabled;
 
-  const activeLocationPill = (
-    <button
-      id={`location-pill-${activeLocation.id}`}
-      className="px-2.5 py-1 text-xs rounded-md font-semibold text-white bg-black shadow-xs whitespace-nowrap"
-      title={`${activeLocation.name}, ${activeLocation.country}`}
-    >
-      {activeLocation.name}
-    </button>
+  const activeLocationDropdown = (
+    <div className="relative flex items-center shrink-0">
+      <select
+        id={`select-location-${activeLocation.id}`}
+        value={activeLocation.id}
+        onChange={(e) => {
+          const loc = locations.find((l) => l.id === e.target.value);
+          if (loc) onSelectLocation(loc);
+        }}
+        className="appearance-none pl-2.5 pr-6 py-1 text-xs rounded-md font-semibold text-white bg-black shadow-xs whitespace-nowrap cursor-pointer focus:outline-hidden"
+        title={`${activeLocation.name}, ${activeLocation.country}`}
+      >
+        {locations.map((loc) => (
+          <option key={loc.id} value={loc.id} className="bg-white text-black">
+            {loc.name}
+          </option>
+        ))}
+      </select>
+      <ChevronDown className="w-3 h-3 text-white/70 pointer-events-none absolute right-1.5" />
+    </div>
   );
 
   const allCitiesButton = (
@@ -60,11 +77,10 @@ export const Header: React.FC<HeaderProps> = ({
       <button
         id="btn-quick-mute"
         onClick={onToggleMute}
-        className={`p-2 rounded-l-lg transition-colors ${
-          isMuted
-            ? 'bg-red-50 text-red-600'
-            : 'text-neutral-700 hover:bg-neutral-100'
-        }`}
+        className={`p-2 rounded-l-lg transition-colors ${isMuted
+          ? 'bg-red-50 text-red-600'
+          : 'text-neutral-700 hover:bg-neutral-100'
+          }`}
         title={isMuted ? 'Unmute Adhan Audio' : 'Mute Adhan Audio'}
       >
         {isMuted ? (
@@ -78,11 +94,10 @@ export const Header: React.FC<HeaderProps> = ({
       <button
         id="btn-notification-settings"
         onClick={onOpenNotificationModal}
-        className={`relative p-2 transition-colors ${
-          notificationSettings.masterEnabled
-            ? 'text-neutral-700 hover:bg-neutral-100'
-            : 'bg-neutral-50 text-neutral-400 hover:bg-neutral-100'
-        }`}
+        className={`relative p-2 transition-colors ${notificationSettings.masterEnabled
+          ? 'text-neutral-700 hover:bg-neutral-100'
+          : 'bg-neutral-50 text-neutral-400 hover:bg-neutral-100'
+          }`}
         title="Adhan Notification Settings"
       >
         <Bell className="w-4 h-4" />
@@ -114,21 +129,21 @@ export const Header: React.FC<HeaderProps> = ({
   );
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-neutral-200 text-neutral-900">
+    <header className="sticky top-0 z-30 bg-gray-100 border-b border-neutral-200 text-neutral-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between gap-3 py-2.5">
-          
+
           {/* Logo & Title */}
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-9 h-9 shrink-0 rounded-lg bg-black flex items-center justify-center shadow-xs border border-black">
-<SunMoon className="text-gray-100"/>
+              <Mosque className="text-gray-100" />
             </div>
             <div className="min-w-0">
-<h1 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-black flex items-center gap-2">
-                  Prayer Times
-                </h1>
+              <h1 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-black flex items-center gap-2">
+                Prayer Times
+              </h1>
               <p className="text-[11px] text-neutral-500 truncate hidden sm:block">
-                Multiple Locations &bull; 7-Day Schedule &bull; Adhan Alerts
+                7-Day Schedule &bull; Multiple Locations
               </p>
             </div>
           </div>
@@ -138,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Quick Location Selector */}
             <div className="flex items-center bg-neutral-100 border border-neutral-200 rounded-lg p-1 max-w-80 overflow-x-auto scrollbar-none">
               <MapPin className="w-4 h-4 text-neutral-500 ml-1.5 mr-1 shrink-0" />
-              {activeLocationPill}
+              {activeLocationDropdown}
               {allCitiesButton}
             </div>
           </div>
@@ -152,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="md:hidden flex items-center gap-2 pb-2.5 pt-1">
           <div className="flex items-center flex-1 min-w-0 bg-neutral-100 border border-neutral-200 rounded-lg p-1 overflow-x-auto scrollbar-none">
             <MapPin className="w-4 h-4 text-neutral-500 ml-1.5 mr-1 shrink-0" />
-            {activeLocationPill}
+            {activeLocationDropdown}
             {allCitiesButton}
           </div>
         </div>

@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { 
-  ActiveAdhanAlert, 
-  AdhanSoundType, 
-  CalculationSettings, 
-  FardhPrayerKey, 
-  LocationItem, 
-  NotificationSettings 
+import {
+  ActiveAdhanAlert,
+  AdhanSoundType,
+  CalculationSettings,
+  FardhPrayerKey,
+  LocationItem,
+  NotificationSettings
 } from './types';
 import { INITIAL_USER_LOCATIONS } from './data/defaultLocations';
-import { 
-  calculateWeekSchedule, 
-  getCurrentPrayerStatus, 
-  getQiblaInfo, 
+import {
+  calculateWeekSchedule,
+  getCurrentPrayerStatus,
+  getQiblaInfo,
   formatPrayerTime
 } from './services/prayerService';
 import { audioService } from './services/audioService';
@@ -24,6 +24,7 @@ import { NotificationSettingsModal } from './components/NotificationSettingsModa
 import { CalculationSettingsModal } from './components/CalculationSettingsModal';
 import { ActiveAdhanModal } from './components/ActiveAdhanModal';
 import { QiblaModal } from './components/QiblaModal';
+import { Mosque } from 'lucide-react';
 
 const DEFAULT_CALCULATION_SETTINGS: CalculationSettings = {
   method: 'MuslimWorldLeague',
@@ -292,10 +293,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans selection:bg-black selection:text-white">
-      
+
       {/* Top Application Header */}
       <Header
         activeLocation={activeLocation}
+        locations={locations}
+        onSelectLocation={handleSelectLocation}
         onOpenLocationModal={() => setIsLocationModalOpen(true)}
         onOpenNotificationModal={() => setIsNotificationModalOpen(true)}
         onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
@@ -306,7 +309,7 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
-        
+
         {/* Hero Banner: Active/Next Prayer & Live Countdown Timer */}
         {todaySchedule && (
           <HeroCurrentPrayer
@@ -338,7 +341,9 @@ export default function App() {
       <footer className="border-t border-neutral-200 bg-white py-6 text-xs text-neutral-500">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center space-x-2">
-            <span>🕌</span>
+            <div className="w-5 h-5 shrink-0 rounded-md bg-black flex items-center justify-center shadow-xs border border-black">
+              <Mosque size={15} className="text-gray-100" />
+            </div>
             <span className="font-semibold text-neutral-900">Prayer Times &amp; Adhan</span>
             <span>&bull; Multiple Locations &bull; 7-Day Schedule</span>
           </div>
