@@ -5,22 +5,19 @@ import {
   CalculationSettings, 
   FardhPrayerKey, 
   LocationItem, 
-  NotificationSettings, 
-  PrayerKey 
+  NotificationSettings 
 } from './types';
 import { INITIAL_USER_LOCATIONS } from './data/defaultLocations';
 import { 
   calculateWeekSchedule, 
   getCurrentPrayerStatus, 
   getQiblaInfo, 
-  formatPrayerTime,
-  PRAYER_DISPLAY_NAMES
+  formatPrayerTime
 } from './services/prayerService';
 import { audioService } from './services/audioService';
 import { NotificationService } from './services/notificationService';
 import { Header } from './components/Header';
 import { HeroCurrentPrayer } from './components/HeroCurrentPrayer';
-import { TodayPrayersList } from './components/TodayPrayersList';
 import { WeekScheduleView } from './components/WeekScheduleView';
 import { LocationManagerModal } from './components/LocationManagerModal';
 import { NotificationSettingsModal } from './components/NotificationSettingsModal';
@@ -101,17 +98,14 @@ export default function App() {
     return DEFAULT_CALCULATION_SETTINGS;
   });
 
-  // 4. View Mode ('today' or 'week')
-  const [viewMode, setViewMode] = useState<'today' | 'week'>('today');
-
-  // 5. Active Live Time
+  // 4. Active Live Time
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
-  // 6. Audio Playback State
+  // 5. Audio Playback State
   const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
   const [playingSoundKey, setPlayingSoundKey] = useState<string | null>(null);
 
-  // 7. Modals State
+  // 6. Modals State
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -266,30 +260,6 @@ export default function App() {
     });
   };
 
-  // Prayer List Notification Toggle
-  const handleTogglePrayerNotification = (prayer: FardhPrayerKey) => {
-    setNotificationSettings((prev) => {
-      const current = prev.perPrayer[prayer];
-      return {
-        ...prev,
-        perPrayer: {
-          ...prev.perPrayer,
-          [prayer]: {
-            ...current,
-            enabled: !current.enabled,
-          },
-        },
-      };
-    });
-  };
-
-  // Preview Specific Prayer Sound
-  const handlePreviewPrayerSound = (prayer: FardhPrayerKey) => {
-    const config = notificationSettings.perPrayer[prayer];
-    if (!config) return;
-    handlePlaySound(config.sound, prayer);
-  };
-
   // Trigger Full Test Adhan Notification
   const handleTestAdhan = () => {
     const fardhPrayer = (prayerStatus.nextPrayer === 'sunrise' ? 'fajr' : prayerStatus.nextPrayer) as FardhPrayerKey;
@@ -325,17 +295,13 @@ export default function App() {
       
       {/* Top Application Header */}
       <Header
-        locations={locations}
         activeLocation={activeLocation}
-        onSelectLocation={handleSelectLocation}
         onOpenLocationModal={() => setIsLocationModalOpen(true)}
         onOpenNotificationModal={() => setIsNotificationModalOpen(true)}
         onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
         onOpenQiblaModal={() => setIsQiblaModalOpen(true)}
         notificationSettings={notificationSettings}
         onToggleMute={handleToggleMute}
-        viewMode={viewMode}
-        onChangeViewMode={setViewMode}
       />
 
       {/* Main Content Area */}
@@ -358,52 +324,13 @@ export default function App() {
           />
         )}
 
-        {/* View 1: Today's 5 Prayers + Sound Previews */}
-        {viewMode === 'today' && todaySchedule && (
-          <div className="space-y-8">
-            <TodayPrayersList
-              schedule={todaySchedule}
-              currentPrayer={prayerStatus.currentPrayer}
-              nextPrayer={prayerStatus.nextPrayer}
-              timeFormat={calculationSettings.timeFormat}
-              timezone={activeLocation.timezone}
-              notificationSettings={notificationSettings}
-              onTogglePrayerNotification={handleTogglePrayerNotification}
-              onPreviewPrayerSound={handlePreviewPrayerSound}
-              playingSoundPrayer={playingSoundKey}
-              onStopAudio={handleStopAudio}
-            />
-
-            {/* Quick 7-Day Preview Teaser */}
-            <div className="p-5 rounded-2xl bg-white border border-neutral-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h4 className="font-bold text-neutral-900 text-sm flex items-center gap-2">
-                  Looking for the rest of the week?
-                </h4>
-                <p className="text-xs text-neutral-500 mt-0.5">
-                  View complete daily prayer timetables and fasting durations for the next 7 days
-                </p>
-              </div>
-              <button
-                id="btn-switch-to-week-view"
-                onClick={() => setViewMode('week')}
-                className="px-4 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-colors shrink-0 shadow-xs"
-              >
-                View 7-Day Schedule &rarr;
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* View 2: Complete 7-Day / Next Week Schedule */}
-        {viewMode === 'week' && (
-          <WeekScheduleView
-            schedule={weekSchedule}
-            location={activeLocation}
-            timeFormat={calculationSettings.timeFormat}
-            timezone={activeLocation.timezone}
-          />
-        )}
+        {/* View: Complete 7-Day / Next Week Schedule */}
+        <WeekScheduleView
+          schedule={weekSchedule}
+          location={activeLocation}
+          timeFormat={calculationSettings.timeFormat}
+          timezone={activeLocation.timezone}
+        />
 
       </main>
 
