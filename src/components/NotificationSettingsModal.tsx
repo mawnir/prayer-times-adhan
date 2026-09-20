@@ -117,17 +117,17 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 animate-in fade-in duration-150">
-      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Modal Header */}
-        <div className="p-5 bg-emerald-950 text-white flex items-center justify-between border-b border-emerald-800">
+        <div className="p-5 bg-white text-black flex items-center justify-between border-b border-neutral-200">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-emerald-800 text-emerald-300">
+            <div className="p-2 rounded-xl bg-black text-white">
               <Bell className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-bold text-lg font-serif">Adhan &amp; Notification Settings</h3>
-              <p className="text-xs text-emerald-300">
+              <p className="text-xs text-neutral-500">
                 Customize sounds, lead times, and alerts for each prayer
               </p>
             </div>
@@ -135,7 +135,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
           <button
             id="btn-close-notif-modal"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-emerald-300 hover:text-white hover:bg-emerald-900 transition-colors"
+            className="p-1.5 rounded-lg text-neutral-500 hover:text-black hover:bg-neutral-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -145,13 +145,13 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
         <div className="p-6 overflow-y-auto flex-1 space-y-6">
           
           {/* Master Toggle & Volume Slider */}
-          <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-4">
+          <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-bold text-sm text-emerald-950">
+                <h4 className="font-bold text-sm text-black">
                   Master Adhan Notifications
                 </h4>
-                <p className="text-xs text-emerald-800/80">
+                <p className="text-xs text-neutral-500">
                   Enable or disable all prayer alarms and notifications
                 </p>
               </div>
@@ -159,7 +159,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                 id="btn-toggle-master-notifs"
                 onClick={handleToggleMaster}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
-                  settings.masterEnabled ? 'bg-emerald-700' : 'bg-slate-300'
+                  settings.masterEnabled ? 'bg-black' : 'bg-neutral-300'
                 }`}
               >
                 <span
@@ -171,10 +171,10 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             </div>
 
             {/* Volume Control */}
-            <div className="space-y-1.5 pt-2 border-t border-emerald-200/60">
-              <div className="flex items-center justify-between text-xs font-semibold text-emerald-950">
+            <div className="space-y-1.5 pt-2 border-t border-neutral-200">
+              <div className="flex items-center justify-between text-xs font-semibold text-black">
                 <span className="flex items-center gap-1.5">
-                  <Volume2 className="w-4 h-4 text-emerald-700" />
+                  <Volume2 className="w-4 h-4 text-neutral-600" />
                   Adhan Audio Volume
                 </span>
                 <span className="font-mono">{Math.round(settings.volume * 100)}%</span>
@@ -187,29 +187,29 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                 step="0.05"
                 value={settings.volume}
                 onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                className="w-full accent-emerald-700 h-2 bg-emerald-200/60 rounded-lg cursor-pointer"
+                className="w-full accent-black h-2 bg-neutral-200 rounded-lg cursor-pointer"
               />
             </div>
           </div>
 
           {/* Browser Notification Permission Banner */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-start space-x-3">
-              <div className="p-2 rounded-xl bg-white border border-slate-200 text-slate-700 mt-0.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-700" />
+              <div className="p-2 rounded-xl bg-white border border-neutral-200 text-neutral-700 mt-0.5">
+                <ShieldCheck className="w-4 h-4 text-black" />
               </div>
               <div>
-                <h4 className="font-bold text-sm text-slate-900">
+                <h4 className="font-bold text-sm text-black">
                   Browser Push Notifications
                 </h4>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-neutral-500">
                   Status:{' '}
                   <span className={`font-semibold ${
                     permissionStatus === 'granted'
-                      ? 'text-emerald-700'
+                      ? 'text-black'
                       : permissionStatus === 'denied'
                       ? 'text-red-600'
-                      : 'text-amber-600'
+                      : 'text-neutral-500'
                   }`}>
                     {permissionStatus === 'granted'
                       ? 'Enabled (Permissions Granted)'
@@ -225,7 +225,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
               <button
                 id="btn-request-browser-notif"
                 onClick={handleRequestPermission}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold transition-colors shrink-0 shadow-xs"
+                className="px-3.5 py-1.5 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-colors shrink-0 shadow-xs"
               >
                 Enable in Browser
               </button>
@@ -235,10 +235,10 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
           {/* Per-Prayer Sound & Timing Customization */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="font-bold text-sm text-slate-900 uppercase tracking-wider text-xs">
+              <h4 className="font-bold text-sm text-black uppercase tracking-wider text-xs">
                 Per-Prayer Sounds &amp; Lead Times
               </h4>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-neutral-400">
                 Custom sound for each of the 5 prayers
               </span>
             </div>
@@ -255,8 +255,8 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                     id={`notif-config-${prayer}`}
                     className={`p-4 rounded-2xl border transition-all ${
                       config.enabled && settings.masterEnabled
-                        ? 'border-slate-200 bg-white shadow-xs'
-                        : 'border-slate-200/60 bg-slate-50/60 opacity-70'
+                        ? 'border-neutral-200 bg-white shadow-xs'
+                        : 'border-neutral-200/60 bg-neutral-50/60 opacity-70'
                     }`}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -268,18 +268,18 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                           id={`checkbox-notif-${prayer}`}
                           checked={config.enabled}
                           onChange={() => handleTogglePrayer(prayer)}
-                          className="w-4 h-4 rounded-sm text-emerald-700 focus:ring-emerald-600 cursor-pointer accent-emerald-700"
+                          className="w-4 h-4 rounded-sm text-black focus:ring-black cursor-pointer accent-black"
                         />
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-slate-900 text-sm">
+                            <span className="font-bold text-black text-sm">
                               {meta.en}
                             </span>
-                            <span className="text-xs font-serif text-slate-400">
+                            <span className="text-xs font-serif text-neutral-400">
                               {meta.ar}
                             </span>
                           </div>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-neutral-500">
                             {prayer === 'fajr' ? 'Dawn Call (includes As-Salatu Khayr)' : meta.meaning}
                           </span>
                         </div>
@@ -296,7 +296,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                             onChange={(e) => handlePrayerSoundChange(prayer, e.target.value as AdhanSoundType)}
                             disabled={!config.enabled || !settings.masterEnabled}
                             aria-label={`${meta.en} notification sound`}
-                            className="text-xs py-1.5 px-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:ring-2 focus:ring-emerald-600 focus:outline-hidden disabled:opacity-50"
+                            className="text-xs py-1.5 px-2.5 rounded-xl border border-neutral-200 bg-neutral-50 font-medium text-neutral-800 focus:ring-2 focus:ring-black focus:outline-hidden disabled:opacity-50"
                           >
                             {soundOptions.map((opt) => (
                               <option key={opt.value} value={opt.value}>
@@ -318,7 +318,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                             className={`p-1.5 rounded-lg border transition-all ${
                               isPlayingThis
                                 ? 'bg-red-50 border-red-300 text-red-700'
-                                : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800'
+                                : 'bg-neutral-100 border-neutral-200 text-neutral-700 hover:bg-neutral-200 hover:text-black'
                             }`}
                             title={isPlayingThis ? 'Stop Audio' : 'Preview this sound'}
                           >
@@ -332,14 +332,14 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
 
                         {/* Reminder Lead Time */}
                         <div className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5 text-slate-400" />
+                          <Clock className="w-3.5 h-3.5 text-neutral-400" />
                           <select
                             id={`select-lead-time-${prayer}`}
                             value={config.leadTimeMinutes}
                             onChange={(e) => handlePrayerLeadTimeChange(prayer, parseInt(e.target.value, 10))}
                             disabled={!config.enabled || !settings.masterEnabled}
                             aria-label={`${meta.en} reminder lead time`}
-                            className="text-xs py-1.5 px-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium text-slate-800 focus:ring-2 focus:ring-emerald-600 focus:outline-hidden disabled:opacity-50"
+                            className="text-xs py-1.5 px-2.5 rounded-xl border border-neutral-200 bg-neutral-50 font-medium text-neutral-800 focus:ring-2 focus:ring-black focus:outline-hidden disabled:opacity-50"
                           >
                             <option value="0">At Prayer Time</option>
                             <option value="5">5 min before</option>
@@ -361,11 +361,11 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="p-4 bg-neutral-50 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <button
             id="btn-test-notification-alert"
             onClick={onTestNotification}
-            className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold transition-colors shadow-xs"
+            className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-colors shadow-xs"
           >
             <Sparkles className="w-3.5 h-3.5" />
             Test Adhan &amp; Notification Alert Now
@@ -373,7 +373,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
 
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold transition-colors"
+            className="px-5 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-colors"
           >
             Save &amp; Close
           </button>

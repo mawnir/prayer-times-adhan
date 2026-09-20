@@ -321,7 +321,7 @@ export default function App() {
   }, [prayerStatus.nextPrayerTime, calculationSettings.timeFormat, activeLocation.timezone]);
 
   return (
-    <div className="min-h-screen bg-slate-100/70 text-slate-800 flex flex-col font-sans selection:bg-emerald-200 selection:text-emerald-900">
+    <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans selection:bg-black selection:text-white">
       
       {/* Top Application Header */}
       <Header
@@ -375,19 +375,19 @@ export default function App() {
             />
 
             {/* Quick 7-Day Preview Teaser */}
-            <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="p-5 rounded-2xl bg-white border border-neutral-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <h4 className="font-bold text-neutral-900 text-sm flex items-center gap-2">
                   Looking for the rest of the week?
                 </h4>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-neutral-500 mt-0.5">
                   View complete daily prayer timetables and fasting durations for the next 7 days
                 </p>
               </div>
               <button
                 id="btn-switch-to-week-view"
                 onClick={() => setViewMode('week')}
-                className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold transition-colors shrink-0 shadow-xs"
+                className="px-4 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-colors shrink-0 shadow-xs"
               >
                 View 7-Day Schedule &rarr;
               </button>
@@ -408,32 +408,32 @@ export default function App() {
       </main>
 
       {/* Elegant Footer */}
-      <footer className="border-t border-slate-200 bg-white/70 py-6 text-xs text-slate-500">
+      <footer className="border-t border-neutral-200 bg-white py-6 text-xs text-neutral-500">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center space-x-2">
             <span>🕌</span>
-            <span className="font-semibold text-slate-700">Prayer Times &amp; Adhan</span>
+            <span className="font-semibold text-neutral-900">Prayer Times &amp; Adhan</span>
             <span>&bull; Multiple Locations &bull; 7-Day Schedule</span>
           </div>
 
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsSettingsModalOpen(true)}
-              className="hover:text-emerald-800 underline transition-colors"
+              className="hover:text-black underline transition-colors"
             >
               Calculation: {calculationSettings.method}
             </button>
             <span>&bull;</span>
             <button
               onClick={() => setIsNotificationModalOpen(true)}
-              className="hover:text-emerald-800 underline transition-colors"
+              className="hover:text-black underline transition-colors"
             >
               Adhan Notifications
             </button>
             <span>&bull;</span>
             <button
               onClick={() => setIsLocationModalOpen(true)}
-              className="hover:text-emerald-800 underline transition-colors"
+              className="hover:text-black underline transition-colors"
             >
               Manage Cities
             </button>

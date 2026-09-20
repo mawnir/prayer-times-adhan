@@ -92,17 +92,17 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 animate-in fade-in duration-150">
-      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Modal Header */}
-        <div className="p-5 bg-emerald-950 text-white flex items-center justify-between border-b border-emerald-800">
+        <div className="p-5 bg-white text-black flex items-center justify-between border-b border-neutral-200">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-emerald-800 text-emerald-300">
+            <div className="p-2 rounded-xl bg-black text-white">
               <Settings className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-bold text-lg font-serif">Calculation &amp; Jurisprudence</h3>
-              <p className="text-xs text-emerald-300">
+              <p className="text-xs text-neutral-500">
                 Astronomical methods, Asr madhab, and minute adjustments
               </p>
             </div>
@@ -110,7 +110,7 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
           <button
             id="btn-close-calc-modal"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-emerald-300 hover:text-white hover:bg-emerald-900 transition-colors"
+            className="p-1.5 rounded-lg text-neutral-500 hover:text-black hover:bg-neutral-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -120,21 +120,21 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
         <div className="p-6 overflow-y-auto flex-1 space-y-6">
           
           {/* Time Display Format */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+          <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 flex items-center justify-between">
             <div>
-              <h4 className="font-bold text-sm text-slate-900">Time Display Format</h4>
-              <p className="text-xs text-slate-500">
+              <h4 className="font-bold text-sm text-black">Time Display Format</h4>
+              <p className="text-xs text-neutral-500">
                 Toggle between standard 12-hour (AM/PM) and 24-hour military format
               </p>
             </div>
-            <div className="flex items-center bg-slate-200/80 p-1 rounded-xl">
+            <div className="flex items-center bg-neutral-200/80 p-1 rounded-xl">
               <button
                 id="btn-format-12h"
                 onClick={() => onUpdateSettings({ ...settings, timeFormat: '12h' })}
                 className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                   settings.timeFormat === '12h'
-                    ? 'bg-white text-emerald-950 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-black shadow-xs'
+                    : 'text-neutral-500 hover:text-black'
                 }`}
               >
                 12-Hour
@@ -144,8 +144,8 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 onClick={() => onUpdateSettings({ ...settings, timeFormat: '24h' })}
                 className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                   settings.timeFormat === '24h'
-                    ? 'bg-white text-emerald-950 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-black shadow-xs'
+                    : 'text-neutral-500 hover:text-black'
                 }`}
               >
                 24-Hour
@@ -155,7 +155,7 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
 
           {/* Asr Juristic Method (Madhab) */}
           <div className="space-y-2">
-            <h4 className="font-bold text-sm text-slate-900 uppercase tracking-wider text-xs">
+            <h4 className="font-bold text-sm text-black uppercase tracking-wider text-xs">
               Asr Juristic Method (Madhab)
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -164,19 +164,19 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 onClick={() => handleMadhabChange('shafi')}
                 className={`p-3.5 rounded-2xl border text-left transition-all ${
                   settings.madhab === 'shafi'
-                    ? 'border-emerald-600 bg-emerald-50/60 ring-2 ring-emerald-500/20'
-                    : 'border-slate-200 hover:border-slate-300 bg-white'
+                    ? 'border-black bg-neutral-100 ring-2 ring-neutral-200'
+                    : 'border-neutral-200 hover:border-neutral-300 bg-white'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-slate-900">
+                  <span className="font-bold text-sm text-black">
                     Standard (Shafi'i, Maliki, Hanbali)
                   </span>
                   {settings.madhab === 'shafi' && (
-                    <Check className="w-4 h-4 text-emerald-700" />
+                    <Check className="w-4 h-4 text-black" />
                   )}
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-neutral-500 mt-1">
                   Shadow length equals object height (1x shadow ratio).
                 </p>
               </button>
@@ -186,19 +186,19 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 onClick={() => handleMadhabChange('hanafi')}
                 className={`p-3.5 rounded-2xl border text-left transition-all ${
                   settings.madhab === 'hanafi'
-                    ? 'border-emerald-600 bg-emerald-50/60 ring-2 ring-emerald-500/20'
-                    : 'border-slate-200 hover:border-slate-300 bg-white'
+                    ? 'border-black bg-neutral-100 ring-2 ring-neutral-200'
+                    : 'border-neutral-200 hover:border-neutral-300 bg-white'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-slate-900">
+                  <span className="font-bold text-sm text-black">
                     Hanafi
                   </span>
                   {settings.madhab === 'hanafi' && (
-                    <Check className="w-4 h-4 text-emerald-700" />
+                    <Check className="w-4 h-4 text-black" />
                   )}
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-neutral-500 mt-1">
                   Shadow length equals twice object height (2x shadow ratio, later Asr).
                 </p>
               </button>
@@ -207,7 +207,7 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
 
           {/* Calculation Method Selection */}
           <div className="space-y-2">
-            <h4 className="font-bold text-sm text-slate-900 uppercase tracking-wider text-xs">
+            <h4 className="font-bold text-sm text-black uppercase tracking-wider text-xs">
               Calculation Method &amp; Convention
             </h4>
             <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
@@ -220,16 +220,16 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                     onClick={() => handleMethodChange(m.key)}
                     className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
                       isSelected
-                        ? 'border-emerald-600 bg-emerald-50/70 font-medium'
-                        : 'border-slate-200 hover:bg-slate-50 bg-white'
+                        ? 'border-black bg-neutral-100 font-medium'
+                        : 'border-neutral-200 hover:bg-neutral-50 bg-white'
                     }`}
                   >
                     <div>
-                      <div className="text-sm font-bold text-slate-900">{m.label}</div>
-                      <div className="text-xs text-slate-500">{m.desc}</div>
+                      <div className="text-sm font-bold text-black">{m.label}</div>
+                      <div className="text-xs text-neutral-500">{m.desc}</div>
                     </div>
                     {isSelected && (
-                      <Check className="w-4 h-4 text-emerald-700 shrink-0 ml-2" />
+                      <Check className="w-4 h-4 text-black shrink-0 ml-2" />
                     )}
                   </div>
                 );
@@ -241,16 +241,16 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-bold text-sm text-slate-900 uppercase tracking-wider text-xs">
+                <h4 className="font-bold text-sm text-black uppercase tracking-wider text-xs">
                   Manual Minute Adjustments
                 </h4>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-neutral-500">
                   Calibrate prayer times to sync with your local mosque (+/- minutes)
                 </p>
               </div>
               <button
                 onClick={handleResetOffsets}
-                className="text-xs text-slate-500 hover:text-emerald-800 flex items-center gap-1"
+                className="text-xs text-neutral-500 hover:text-black flex items-center gap-1"
               >
                 <RotateCcw className="w-3 h-3" /> Reset
               </button>
@@ -264,25 +264,25 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 return (
                   <div
                     key={prayer}
-                    className="p-2.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between"
+                    className="p-2.5 rounded-xl border border-neutral-200 bg-white flex items-center justify-between"
                   >
-                    <span className="text-xs font-bold text-slate-800 capitalize">
+                    <span className="text-xs font-bold text-neutral-800 capitalize">
                       {meta.en}
                     </span>
 
                     <div className="flex items-center space-x-1.5">
                       <button
                         onClick={() => handleOffsetChange(prayer, offset - 1)}
-                        className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs"
+                        className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center font-bold text-xs"
                       >
                         -
                       </button>
-                      <span className="w-8 text-center text-xs font-mono font-bold text-slate-900">
+                      <span className="w-8 text-center text-xs font-mono font-bold text-black">
                         {offset > 0 ? `+${offset}` : offset}m
                       </span>
                       <button
                         onClick={() => handleOffsetChange(prayer, offset + 1)}
-                        className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs"
+                        className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center font-bold text-xs"
                       >
                         +
                       </button>
@@ -296,10 +296,10 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <div className="p-4 bg-neutral-50 border-t border-neutral-200 flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold transition-colors"
+            className="px-5 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-colors"
           >
             Apply &amp; Close
           </button>

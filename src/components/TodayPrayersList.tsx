@@ -51,12 +51,12 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
     isFardh: boolean;
     icon: React.ReactNode;
   }[] = [
-    { key: 'fajr', isFardh: true, icon: <Sunrise className="w-5 h-5 text-amber-300" /> },
-    { key: 'sunrise', isFardh: false, icon: <Sun className="w-5 h-5 text-amber-400" /> },
-    { key: 'dhuhr', isFardh: true, icon: <Sun className="w-5 h-5 text-yellow-400" /> },
-    { key: 'asr', isFardh: true, icon: <Sunset className="w-5 h-5 text-orange-400" /> },
-    { key: 'maghrib', isFardh: true, icon: <Sunset className="w-5 h-5 text-rose-400" /> },
-    { key: 'isha', isFardh: true, icon: <Moon className="w-5 h-5 text-indigo-300" /> },
+    { key: 'fajr', isFardh: true, icon: <Sunrise className="w-5 h-5 text-neutral-500" /> },
+    { key: 'sunrise', isFardh: false, icon: <Sun className="w-5 h-5 text-neutral-500" /> },
+    { key: 'dhuhr', isFardh: true, icon: <Sun className="w-5 h-5 text-neutral-500" /> },
+    { key: 'asr', isFardh: true, icon: <Sunset className="w-5 h-5 text-neutral-500" /> },
+    { key: 'maghrib', isFardh: true, icon: <Sunset className="w-5 h-5 text-neutral-500" /> },
+    { key: 'isha', isFardh: true, icon: <Moon className="w-5 h-5 text-neutral-500" /> },
   ];
 
   const getStatus = (key: PrayerKey) => {
@@ -85,13 +85,13 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
       {/* Section Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-emerald-950 font-serif flex items-center gap-2">
+          <h3 className="text-base sm:text-lg font-bold text-black font-serif flex items-center gap-2">
             Today's Prayers
-            <span className="text-xs font-sans font-normal text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200">
+            <span className="text-xs font-sans font-normal text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200">
               5 Daily Prayers &bull; الفروض الخمسة
             </span>
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-neutral-500 mt-0.5">
             Individual adhan preview, custom alarms, and prayer progression
           </p>
         </div>
@@ -111,11 +111,11 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
           const isPlayingThis = playingSoundPrayer === item.key;
 
           // Border & Background style based on status
-          let cardStyle = 'bg-white/80 border-slate-200/80 text-slate-800 hover:border-emerald-300';
+          let cardStyle = 'bg-white border-neutral-200 text-neutral-900 hover:border-neutral-400';
           if (status === 'next') {
-            cardStyle = 'bg-emerald-50 border-emerald-500 shadow-md shadow-emerald-500/10 ring-2 ring-emerald-500/20 text-emerald-950';
+            cardStyle = 'bg-neutral-100 border-black shadow-sm ring-1 ring-neutral-300 text-black';
           } else if (status === 'current') {
-            cardStyle = 'bg-emerald-900/5 border-emerald-400 text-emerald-900';
+            cardStyle = 'bg-neutral-50 border-neutral-300 text-black';
           }
 
           return (
@@ -127,21 +127,21 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
               {/* Top Row: Icon, Names, Status Badge */}
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="p-2.5 rounded-xl bg-emerald-900/5 border border-emerald-800/10 flex items-center justify-center">
+                  <div className="p-2.5 rounded-xl bg-neutral-100 border border-neutral-200 flex items-center justify-center">
                     {item.icon}
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <h4 className="font-bold text-base text-slate-900">
+                      <h4 className="font-bold text-base text-black">
                         {prayerMeta.en}
                       </h4>
                       {!isFardh && (
-                        <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded-sm bg-slate-100 text-slate-500 border border-slate-200">
+                        <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded-sm bg-neutral-100 text-neutral-500 border border-neutral-200">
                           Sunnah
                         </span>
                       )}
                     </div>
-                    <span className="text-xs font-serif text-slate-400">
+                    <span className="text-xs font-serif text-neutral-400">
                       {prayerMeta.ar}
                     </span>
                   </div>
@@ -149,13 +149,13 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
 
                 {/* Status Indicator Badge */}
                 {status === 'next' ? (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-xs animate-pulse">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-black text-white shadow-xs animate-pulse">
                     <Clock className="w-3 h-3" />
                     Next Prayer
                   </span>
                 ) : status === 'current' ? (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                    <Sparkles className="w-3 h-3 text-emerald-600" />
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-neutral-100 text-black border border-neutral-300">
+                    <Sparkles className="w-3 h-3 text-neutral-500" />
                     Current
                   </span>
                 ) : null}
@@ -163,12 +163,12 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
 
               {/* Center: Scheduled Time */}
               <div className="my-3 flex items-baseline justify-between">
-                <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-slate-900">
+                <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-black">
                   {timeStr}
                 </span>
 
                 {isFardh && (
-                  <span className="text-xs text-slate-500 font-medium truncate max-w-[120px]" title={getSoundLabel(fardhKey)}>
+                  <span className="text-xs text-neutral-500 font-medium truncate max-w-[120px]" title={getSoundLabel(fardhKey)}>
                     {getSoundLabel(fardhKey)}
                   </span>
                 )}
@@ -176,7 +176,7 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
 
               {/* Bottom Actions Row: Preview Sound, Toggle Notification */}
               {isFardh ? (
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                <div className="pt-2 border-t border-neutral-100 flex items-center justify-between text-xs">
                   
                   {/* Listen / Preview Audio button */}
                   <button
@@ -191,7 +191,7 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-medium transition-all ${
                       isPlayingThis
                         ? 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'
-                        : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200/60'
+                        : 'bg-neutral-100 text-black hover:bg-neutral-200 border border-neutral-200'
                     }`}
                     title={isPlayingThis ? 'Stop Audio' : `Preview ${prayerMeta.en} Adhan`}
                   >
@@ -214,15 +214,15 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
                     onClick={() => onTogglePrayerNotification(fardhKey)}
                     className={`flex items-center gap-1 px-2.5 py-1 rounded-lg transition-all ${
                       isNotifEnabled
-                        ? 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200'
-                        : 'text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200'
+                        ? 'text-black bg-neutral-100 hover:bg-neutral-200 border border-neutral-300'
+                        : 'text-neutral-400 hover:text-neutral-600 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200'
                     }`}
                     title={isNotifEnabled ? 'Disable notification for this prayer' : 'Enable notification for this prayer'}
                   >
                     {isNotifEnabled ? (
                       <>
-                        <Bell className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600" />
-                        <span className="font-semibold text-emerald-800">Alert On</span>
+                        <Bell className="w-3.5 h-3.5 text-black fill-black" />
+                        <span className="font-semibold text-black">Alert On</span>
                       </>
                     ) : (
                       <>
@@ -234,7 +234,7 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
 
                 </div>
               ) : (
-                <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-400 italic">
+                <div className="pt-2 border-t border-neutral-100 text-[11px] text-neutral-400 italic">
                   Fajr ends at sunrise &bull; Voluntary Ishraq prayer starts ~15m after
                 </div>
               )}
@@ -246,22 +246,22 @@ export const TodayPrayersList: React.FC<TodayPrayersListProps> = ({
 
       {/* Sunnah & Qiyam Reference Footer */}
       {(schedule.midnight || schedule.qiyam) && (
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-slate-600 text-xs flex flex-wrap items-center justify-between gap-3">
+        <div className="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200 text-neutral-600 text-xs flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Moon className="w-4 h-4 text-indigo-600" />
-            <span className="font-semibold text-slate-700">Night Reference Times:</span>
+            <Moon className="w-4 h-4 text-neutral-500" />
+            <span className="font-semibold text-neutral-700">Night Reference Times:</span>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             {schedule.midnight && (
               <span>
-                <span className="text-slate-400">Islamic Midnight:</span>{' '}
-                <strong className="font-mono text-slate-800">{formatPrayerTime(schedule.midnight, timeFormat, timezone)}</strong>
+                <span className="text-neutral-400">Islamic Midnight:</span>{' '}
+                <strong className="font-mono text-neutral-800">{formatPrayerTime(schedule.midnight, timeFormat, timezone)}</strong>
               </span>
             )}
             {schedule.qiyam && (
               <span>
-                <span className="text-slate-400">Last 1/3 (Qiyam / Tahajjud):</span>{' '}
-                <strong className="font-mono text-slate-800">{formatPrayerTime(schedule.qiyam, timeFormat, timezone)}</strong>
+                <span className="text-neutral-400">Last 1/3 (Qiyam / Tahajjud):</span>{' '}
+                <strong className="font-mono text-neutral-800">{formatPrayerTime(schedule.qiyam, timeFormat, timezone)}</strong>
               </span>
             )}
           </div>

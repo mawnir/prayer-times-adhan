@@ -200,22 +200,22 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 animate-in fade-in duration-150">
-      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[92vh]">
         
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 bg-emerald-950 text-white flex items-center justify-between border-b border-emerald-800 shrink-0">
+        <div className="p-4 sm:p-5 bg-white text-black flex items-center justify-between border-b border-neutral-200 shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-emerald-800 text-emerald-300">
+            <div className="p-2 rounded-xl bg-black text-white">
               <Globe className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-bold text-lg font-serif flex items-center gap-2">
                 All Cities Worldwide
-                <span className="text-[10px] font-sans font-medium px-2 py-0.5 rounded-full bg-emerald-800 text-emerald-200 border border-emerald-700">
+                <span className="text-[10px] font-sans font-medium px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600 border border-neutral-200">
                   Global Database
                 </span>
               </h3>
-              <p className="text-xs text-emerald-300/80">
+              <p className="text-xs text-neutral-500">
                 Search and select any city in the world for accurate prayer times
               </p>
             </div>
@@ -223,21 +223,21 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
           <button
             id="btn-close-location-modal"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-emerald-300 hover:text-white hover:bg-emerald-900 transition-colors"
+            className="p-1.5 rounded-lg text-neutral-500 hover:text-black hover:bg-neutral-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 bg-slate-50 text-xs font-semibold shrink-0 overflow-x-auto">
+        <div className="flex border-b border-neutral-200 bg-neutral-50 text-xs font-semibold shrink-0 overflow-x-auto">
           <button
             id="tab-btn-search-all-cities"
             onClick={() => setActiveTab('search')}
             className={`flex-1 py-3 px-4 text-center border-b-2 transition-colors whitespace-nowrap flex items-center justify-center gap-1.5 ${
               activeTab === 'search'
-                ? 'border-emerald-700 text-emerald-900 bg-white font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                ? 'border-black text-neutral-900 bg-white font-bold'
+                : 'border-transparent text-neutral-500 hover:text-neutral-900'
             }`}
           >
             <Search className="w-3.5 h-3.5" />
@@ -249,8 +249,8 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
             onClick={() => setActiveTab('saved')}
             className={`flex-1 py-3 px-4 text-center border-b-2 transition-colors whitespace-nowrap flex items-center justify-center gap-1.5 ${
               activeTab === 'saved'
-                ? 'border-emerald-700 text-emerald-900 bg-white font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                ? 'border-black text-neutral-900 bg-white font-bold'
+                : 'border-transparent text-neutral-500 hover:text-neutral-900'
             }`}
           >
             <MapPin className="w-3.5 h-3.5" />
@@ -262,8 +262,8 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
             onClick={() => setActiveTab('compare')}
             className={`flex-1 py-3 px-4 text-center border-b-2 transition-colors whitespace-nowrap flex items-center justify-center gap-1.5 ${
               activeTab === 'compare'
-                ? 'border-emerald-700 text-emerald-900 bg-white font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                ? 'border-black text-neutral-900 bg-white font-bold'
+                : 'border-transparent text-neutral-500 hover:text-neutral-900'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -275,8 +275,8 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
             onClick={() => setActiveTab('custom')}
             className={`flex-1 py-3 px-4 text-center border-b-2 transition-colors whitespace-nowrap flex items-center justify-center gap-1.5 ${
               activeTab === 'custom'
-                ? 'border-emerald-700 text-emerald-900 bg-white font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                ? 'border-black text-neutral-900 bg-white font-bold'
+                : 'border-transparent text-neutral-500 hover:text-neutral-900'
             }`}
           >
             <Plus className="w-3.5 h-3.5" />
@@ -294,7 +294,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
               {/* Main Search Input */}
               <div className="space-y-2">
                 <div className="relative">
-                  <Search className="w-5 h-5 absolute left-3.5 top-3.5 text-slate-400" />
+                  <Search className="w-5 h-5 absolute left-3.5 top-3.5 text-neutral-400" />
                   <input
                     id="input-global-city-search"
                     type="text"
@@ -302,23 +302,23 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                     placeholder="Search any city or country worldwide (e.g. Cairo, Toronto, Dearborn, Kozhikode, Sydney)..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-emerald-700/30 text-sm focus:outline-hidden focus:border-emerald-700 bg-white shadow-xs font-medium"
+                    className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-black/30 text-sm focus:outline-hidden focus:border-black bg-white shadow-xs font-medium"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-700"
+                      className="absolute right-3.5 top-3.5 text-neutral-400 hover:text-neutral-700"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-slate-500 px-1">
+                <div className="flex items-center justify-between text-xs text-neutral-500 px-1">
                   <span className="flex items-center gap-1.5">
                     {isSearching ? (
                       <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-700" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-700" />
                         Searching 1M+ cities worldwide...
                       </>
                     ) : searchQuery ? (
@@ -332,9 +332,9 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                   <button
                     onClick={handleUseGps}
                     disabled={isDetectingGps}
-                    className="text-emerald-800 font-semibold hover:underline flex items-center gap-1"
+                    className="text-black font-semibold hover:underline flex items-center gap-1"
                   >
-                    <Navigation className="w-3 h-3 text-emerald-700" />
+                    <Navigation className="w-3 h-3 text-neutral-700" />
                     {isDetectingGps ? 'Locating...' : 'Use Current GPS'}
                   </button>
                 </div>
@@ -346,7 +346,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
               {/* World Region Selector (visible when no search query) */}
               {!searchQuery && (
                 <div className="space-y-1.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">
                     Filter by Region
                   </span>
                   <div className="flex flex-wrap gap-1.5">
@@ -356,8 +356,8 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                         onClick={() => setSelectedRegion(region)}
                         className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
                           selectedRegion === region
-                            ? 'bg-emerald-800 text-white font-bold'
-                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                            ? 'bg-neutral-800 text-white font-bold'
+                            : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
                         }`}
                       >
                         {region}
@@ -370,10 +370,10 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
               {/* Cities List Cards */}
               <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
                 {displayedCities.length === 0 ? (
-                  <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 p-6">
-                    <Globe className="w-8 h-8 mx-auto text-slate-400 mb-2" />
-                    <p className="font-semibold text-slate-700 text-sm">No cities found matching "{searchQuery}"</p>
-                    <p className="text-xs text-slate-500 mt-1">
+                  <div className="text-center py-10 bg-neutral-50 rounded-2xl border border-dashed border-neutral-200 p-6">
+                    <Globe className="w-8 h-8 mx-auto text-neutral-400 mb-2" />
+                    <p className="font-semibold text-neutral-700 text-sm">No cities found matching "{searchQuery}"</p>
+                    <p className="text-xs text-neutral-500 mt-1">
                       Try checking spelling or add custom coordinates in the "Custom Lat/Lng" tab.
                     </p>
                   </div>
@@ -390,16 +390,16 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                         key={`${city.id}-${city.name}-${city.country}`}
                         className={`p-3 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
                           isAlreadyActive
-                            ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
-                            : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50/80 bg-white'
+                            ? 'border-black bg-neutral-50/70 shadow-xs'
+                            : 'border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/80 bg-white'
                         }`}
                       >
                         <div className="flex items-center space-x-3 min-w-0 flex-1">
                           <div
                             className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-sm font-bold ${
                               isAlreadyActive
-                                ? 'bg-emerald-700 text-white'
-                                : 'bg-slate-100 text-slate-600'
+                                ? 'bg-black text-white'
+                                : 'bg-neutral-100 text-neutral-600'
                             }`}
                           >
                             <Building2 className="w-4 h-4" />
@@ -407,25 +407,25 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
 
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-bold text-sm text-slate-900 truncate">
+                              <span className="font-bold text-sm text-neutral-900 truncate">
                                 {city.name}
                               </span>
                               {city.admin1 && (
-                                <span className="text-xs text-slate-500 truncate">
+                                <span className="text-xs text-neutral-500 truncate">
                                   {city.admin1}
                                 </span>
                               )}
-                              <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700">
+                              <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-neutral-100 text-neutral-700">
                                 {city.country}
                               </span>
                               {isAlreadyActive && (
-                                <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-700 text-white">
+                                <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-black text-white">
                                   Active
                                 </span>
                               )}
                             </div>
 
-                            <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
+                            <p className="text-[11px] text-neutral-400 mt-0.5 flex items-center gap-2">
                               <span>Lat: {city.latitude.toFixed(2)}°, Lng: {city.longitude.toFixed(2)}°</span>
                               {city.timezone && <span>&bull; {city.timezone}</span>}
                             </p>
@@ -435,14 +435,14 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                         {/* Action Button */}
                         <div className="shrink-0">
                           {isAlreadyActive ? (
-                            <span className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-emerald-100 text-emerald-800 flex items-center gap-1">
+                            <span className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-neutral-100 text-black flex items-center gap-1">
                               <Check className="w-3.5 h-3.5" /> Selected
                             </span>
                           ) : (
                             <button
                               id={`btn-select-city-${city.id}`}
                               onClick={() => handleSelectOrAddCity(city)}
-                              className="px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-1"
+                              className="px-3.5 py-1.5 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-1"
                             >
                               <Check className="w-3 h-3" /> Select City
                             </button>
@@ -461,12 +461,12 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
           {activeTab === 'saved' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase text-slate-500 tracking-wider">
+                <span className="text-xs font-semibold uppercase text-neutral-500 tracking-wider">
                   Your Active &amp; Saved Cities
                 </span>
                 <button
                   onClick={() => setActiveTab('search')}
-                  className="text-xs text-emerald-800 font-semibold hover:underline flex items-center gap-1"
+                  className="text-xs text-black font-semibold hover:underline flex items-center gap-1"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Search &amp; Add More Cities
@@ -481,8 +481,8 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                       key={loc.id}
                       className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between ${
                         isActive
-                          ? 'border-emerald-600 bg-emerald-50/70 shadow-xs'
-                          : 'border-slate-200 hover:border-slate-300 bg-white'
+                          ? 'border-black bg-neutral-50/70 shadow-xs'
+                          : 'border-neutral-200 hover:border-neutral-300 bg-white'
                       }`}
                     >
                       <div
@@ -495,24 +495,24 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                         <div
                           className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm ${
                             isActive
-                              ? 'bg-emerald-700 text-white'
-                              : 'bg-slate-100 text-slate-600'
+                              ? 'bg-black text-white'
+                              : 'bg-neutral-100 text-neutral-600'
                           }`}
                         >
                           <MapPin className="w-4 h-4" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="font-bold text-slate-900 text-sm">
+                            <h4 className="font-bold text-neutral-900 text-sm">
                               {loc.name}
                             </h4>
                             {isActive && (
-                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-700 text-white">
+                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-black text-white">
                                 Active Now
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-neutral-500">
                             {loc.country} {loc.admin1 && `(${loc.admin1})`} &bull; Lat: {loc.latitude}°, Lng: {loc.longitude}°
                           </p>
                         </div>
@@ -525,7 +525,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                               onSelectLocation(loc);
                               onClose();
                             }}
-                            className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-emerald-100 hover:text-emerald-900 text-slate-700 transition-colors"
+                            className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-neutral-100 hover:bg-neutral-100 hover:text-neutral-900 text-neutral-700 transition-colors"
                           >
                             Set Active
                           </button>
@@ -533,7 +533,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                         {locations.length > 1 && (
                           <button
                             onClick={() => onRemoveLocation(loc.id)}
-                            className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                            className="p-2 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                             title="Remove from saved"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -550,7 +550,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
           {/* TAB 3: Multi-City Timetable Comparison */}
           {activeTab === 'compare' && (
             <div className="space-y-4">
-              <div className="text-xs text-slate-500">
+              <div className="text-xs text-neutral-500">
                 Compare today's 5 prayer times across all your saved cities at a glance:
               </div>
 
@@ -564,18 +564,18 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                       key={loc.id}
                       className={`p-4 rounded-2xl border ${
                         isCurrent
-                          ? 'border-emerald-500 bg-emerald-50/40'
-                          : 'border-slate-200 bg-white'
+                          ? 'border-neutral-500 bg-neutral-50/40'
+                          : 'border-neutral-200 bg-white'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-emerald-700" />
-                          <h4 className="font-bold text-sm text-slate-900">
+                          <MapPin className="w-4 h-4 text-neutral-700" />
+                          <h4 className="font-bold text-sm text-neutral-900">
                             {loc.name}, {loc.country}
                           </h4>
                           {isCurrent && (
-                            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-600 text-white">
+                            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-black text-white">
                               Active
                             </span>
                           )}
@@ -586,7 +586,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                               onSelectLocation(loc);
                               onClose();
                             }}
-                            className="text-xs text-emerald-800 font-semibold hover:underline"
+                            className="text-xs text-black font-semibold hover:underline"
                           >
                             Switch to this city
                           </button>
@@ -595,33 +595,33 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
 
                       {/* 5 Prayers Grid */}
                       <div className="grid grid-cols-5 gap-2 text-center text-xs">
-                        <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
-                          <div className="text-[10px] text-slate-400 font-semibold">FAJR</div>
-                          <div className="font-mono font-bold text-slate-800 mt-0.5">
+                        <div className="p-2 rounded-xl bg-neutral-50 border border-neutral-100">
+                          <div className="text-[10px] text-neutral-400 font-semibold">FAJR</div>
+                          <div className="font-mono font-bold text-black mt-0.5">
                             {formatPrayerTime(todaySched.prayers.fajr, calculationSettings.timeFormat, loc.timezone)}
                           </div>
                         </div>
-                        <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
-                          <div className="text-[10px] text-slate-400 font-semibold">DHUHR</div>
-                          <div className="font-mono font-bold text-slate-800 mt-0.5">
+                        <div className="p-2 rounded-xl bg-neutral-50 border border-neutral-100">
+                          <div className="text-[10px] text-neutral-400 font-semibold">DHUHR</div>
+                          <div className="font-mono font-bold text-black mt-0.5">
                             {formatPrayerTime(todaySched.prayers.dhuhr, calculationSettings.timeFormat, loc.timezone)}
                           </div>
                         </div>
-                        <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
-                          <div className="text-[10px] text-slate-400 font-semibold">ASR</div>
-                          <div className="font-mono font-bold text-slate-800 mt-0.5">
+                        <div className="p-2 rounded-xl bg-neutral-50 border border-neutral-100">
+                          <div className="text-[10px] text-neutral-400 font-semibold">ASR</div>
+                          <div className="font-mono font-bold text-black mt-0.5">
                             {formatPrayerTime(todaySched.prayers.asr, calculationSettings.timeFormat, loc.timezone)}
                           </div>
                         </div>
-                        <div className="p-2 rounded-xl bg-emerald-100/50 border border-emerald-200/50">
-                          <div className="text-[10px] text-emerald-700 font-bold">MAGHRIB</div>
-                          <div className="font-mono font-bold text-emerald-900 mt-0.5">
+                        <div className="p-2 rounded-xl bg-neutral-100/50 border border-neutral-200/50">
+                          <div className="text-[10px] text-neutral-700 font-bold">MAGHRIB</div>
+                          <div className="font-mono font-bold text-neutral-900 mt-0.5">
                             {formatPrayerTime(todaySched.prayers.maghrib, calculationSettings.timeFormat, loc.timezone)}
                           </div>
                         </div>
-                        <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
-                          <div className="text-[10px] text-slate-400 font-semibold">ISHA</div>
-                          <div className="font-mono font-bold text-slate-800 mt-0.5">
+                        <div className="p-2 rounded-xl bg-neutral-50 border border-neutral-100">
+                          <div className="text-[10px] text-neutral-400 font-semibold">ISHA</div>
+                          <div className="font-mono font-bold text-black mt-0.5">
                             {formatPrayerTime(todaySched.prayers.isha, calculationSettings.timeFormat, loc.timezone)}
                           </div>
                         </div>
@@ -636,13 +636,13 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
           {/* TAB 4: Custom Coordinates Form */}
           {activeTab === 'custom' && (
             <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-emerald-900/5 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-4 rounded-2xl bg-neutral-900/5 border border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h4 className="font-bold text-sm text-emerald-950 flex items-center gap-1.5">
-                    <Navigation className="w-4 h-4 text-emerald-700" />
+                  <h4 className="font-bold text-sm text-neutral-950 flex items-center gap-1.5">
+                    <Navigation className="w-4 h-4 text-neutral-700" />
                     Detect via GPS
                   </h4>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-neutral-500">
                     Fetch your exact device coordinates automatically
                   </p>
                   {gpsError && (
@@ -653,42 +653,42 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                   id="btn-detect-gps"
                   onClick={handleUseGps}
                   disabled={isDetectingGps}
-                  className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 shadow-xs"
+                  className="px-4 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 shadow-xs"
                 >
                   <Navigation className="w-3.5 h-3.5" />
                   {isDetectingGps ? 'Locating...' : 'Auto Detect GPS'}
                 </button>
               </div>
 
-              <form onSubmit={handleAddCustom} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
-                <span className="text-xs font-semibold uppercase text-slate-600 tracking-wider block">
+              <form onSubmit={handleAddCustom} className="p-5 rounded-2xl bg-neutral-50 border border-neutral-200 space-y-4">
+                <span className="text-xs font-semibold uppercase text-neutral-600 tracking-wider block">
                   Add Custom Coordinates
                 </span>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">Location / City Name</label>
+                    <label className="block text-xs text-neutral-500 mb-1">Location / City Name</label>
                     <input
                       type="text"
                       placeholder="e.g. Oxford, Cambridge, My Town"
                       value={customName}
                       onChange={(e) => setCustomName(e.target.value)}
                       required
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-600 bg-white"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-neutral-600 bg-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">Country / Territory</label>
+                    <label className="block text-xs text-neutral-500 mb-1">Country / Territory</label>
                     <input
                       type="text"
                       placeholder="e.g. United Kingdom"
                       value={customCountry}
                       onChange={(e) => setCustomCountry(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-600 bg-white"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-neutral-600 bg-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">Latitude (-90 to +90)</label>
+                    <label className="block text-xs text-neutral-500 mb-1">Latitude (-90 to +90)</label>
                     <input
                       type="number"
                       step="any"
@@ -696,11 +696,11 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                       value={customLat}
                       onChange={(e) => setCustomLat(e.target.value)}
                       required
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-600 bg-white font-mono"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-neutral-600 bg-white font-mono"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">Longitude (-180 to +180)</label>
+                    <label className="block text-xs text-neutral-500 mb-1">Longitude (-180 to +180)</label>
                     <input
                       type="number"
                       step="any"
@@ -708,14 +708,14 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                       value={customLng}
                       onChange={(e) => setCustomLng(e.target.value)}
                       required
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-600 bg-white font-mono"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-neutral-600 bg-white font-mono"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold transition-colors shadow-xs"
+                  className="w-full py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-colors shadow-xs"
                 >
                   Save &amp; Set Active
                 </button>
@@ -726,11 +726,11 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
-          <span>Active Location: <strong className="text-slate-800">{activeLocation.name}, {activeLocation.country}</strong></span>
+        <div className="p-3 bg-neutral-50 border-t border-neutral-200 flex items-center justify-between text-xs text-neutral-500">
+          <span>Active Location: <strong className="text-black">{activeLocation.name}, {activeLocation.country}</strong></span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold transition-colors"
+            className="px-4 py-1.5 rounded-xl bg-neutral-200 hover:bg-neutral-300 text-black font-semibold transition-colors"
           >
             Done
           </button>
