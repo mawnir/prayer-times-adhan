@@ -206,6 +206,14 @@ export function calculateWeekSchedule(
   return schedule;
 }
 
+// Morocco moved to UTC+00:00 in September 2026, but many browsers/OS still
+// ship stale IANA data that resolves these zones as UTC+01:00. Pin them to a
+// fixed UTC offset so prayer times render correctly regardless of tzdata.
+const FIXED_UTC_OFFSET_MINUTES: Record<string, number> = {
+  'Africa/Casablanca': 0,
+  'Africa/El_Aaiun': 0,
+};
+
 export function formatPrayerTime(
   date: Date | undefined,
   timeFormat: '12h' | '24h',
@@ -218,6 +226,14 @@ export function formatPrayerTime(
     minute: '2-digit',
     hour12: timeFormat === '12h',
   };
+
+  const fixedOffset = timezone ? FIXED_UTC_OFFSET_MINUTES[timezone] : undefined;
+  if (fixedOffset !== undefined) {
+    // Render the wall clock for that fixed offset deterministically, without
+    // relying on the browser's (possibly stale) timezone database.
+    const shifted = new Date(date.getTime() + fixedOffset * 60000);
+    return new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'UTC' }).format(shifted);
+  }
 
   if (timezone) {
     try {

@@ -45,7 +45,7 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-white border border-neutral-200 p-6 sm:p-8 text-neutral-900 shadow-sm">
+    <div className="relative overflow-hidden rounded-2xl bg-gray-100 border border-neutral-200 p-6 sm:p-8 text-neutral-900 shadow-sm">
 
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         
