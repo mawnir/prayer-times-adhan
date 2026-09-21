@@ -338,34 +338,37 @@ export default function App() {
       </main>
 
       {/* Elegant Footer */}
-      <footer className="border-t border-neutral-200 bg-white py-6 text-xs text-neutral-500">
+      <footer className="border-t border-neutral-200/80 bg-white py-6 text-xs text-neutral-500">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-5 h-5 shrink-0 rounded-md bg-black flex items-center justify-center shadow-xs border border-black">
-              <Mosque size={15} className="text-gray-100" />
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+            <div 
+              className="w-5 h-5 shrink-0 rounded-md flex items-center justify-center shadow-xs"
+              style={{ backgroundColor: 'var(--color-primary)' }}
+            >
+              <Mosque size={13} className="text-white" />
             </div>
             <span className="font-semibold text-neutral-900">Prayer Times &amp; Adhan</span>
             <span>&bull; Multiple Locations &bull; 7-Day Schedule</span>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
             <button
               onClick={() => setIsSettingsModalOpen(true)}
-              className="hover:text-black underline transition-colors"
+              className="hover:text-neutral-900 underline transition-colors"
             >
               Calculation: {calculationSettings.method}
             </button>
             <span>&bull;</span>
             <button
               onClick={() => setIsNotificationModalOpen(true)}
-              className="hover:text-black underline transition-colors"
+              className="hover:text-neutral-900 underline transition-colors"
             >
               Adhan Notifications
             </button>
             <span>&bull;</span>
             <button
               onClick={() => setIsLocationModalOpen(true)}
-              className="hover:text-black underline transition-colors"
+              className="hover:text-neutral-900 underline transition-colors"
             >
               Manage Cities
             </button>

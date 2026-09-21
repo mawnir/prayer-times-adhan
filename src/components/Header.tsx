@@ -8,9 +8,11 @@ import {
   VolumeX,
   Globe,
   Mosque,
-  ChevronDown
+  ChevronDown,
+  Languages,
 } from 'lucide-react';
 import { LocationItem, NotificationSettings } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface HeaderProps {
   activeLocation: LocationItem;
@@ -35,6 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   notificationSettings,
   onToggleMute,
 }) => {
+  const { language, setLanguage, t, isRTL } = useLanguage();
   const isMuted = notificationSettings.volume === 0 || !notificationSettings.masterEnabled;
 
   const activeLocationDropdown = (
@@ -46,16 +49,17 @@ export const Header: React.FC<HeaderProps> = ({
           const loc = locations.find((l) => l.id === e.target.value);
           if (loc) onSelectLocation(loc);
         }}
-        className="appearance-none pl-2.5 pr-6 py-1 text-xs rounded-md font-semibold text-white bg-black shadow-xs whitespace-nowrap cursor-pointer focus:outline-hidden"
+        className="appearance-none pl-2.5 pr-6 py-1 text-xs rounded-md font-medium text-white shadow-xs whitespace-nowrap cursor-pointer transition-colors focus:outline-hidden"
+        style={{ backgroundColor: 'var(--color-primary)' }}
         title={`${activeLocation.name}, ${activeLocation.country}`}
       >
         {locations.map((loc) => (
-          <option key={loc.id} value={loc.id} className="bg-white text-black">
+          <option key={loc.id} value={loc.id} className="bg-white text-neutral-900">
             {loc.name}
           </option>
         ))}
       </select>
-      <ChevronDown className="w-3 h-3 text-white/70 pointer-events-none absolute right-1.5" />
+      <ChevronDown className={`w-3 h-3 text-white/80 pointer-events-none absolute ${isRTL ? 'left-1.5' : 'right-1.5'}`} />
     </div>
   );
 
@@ -63,46 +67,83 @@ export const Header: React.FC<HeaderProps> = ({
     <button
       id="btn-open-location-manager"
       onClick={onOpenLocationModal}
-      className="ml-1 px-2 py-1 text-xs text-neutral-600 hover:text-black bg-white hover:bg-neutral-100 border border-neutral-200 rounded-md transition-all flex items-center gap-1.5 font-medium"
-      title="Search and select any city worldwide"
+      className="px-2 py-1 text-xs text-neutral-600 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-200/80 rounded-md transition-all flex items-center gap-1.5 font-medium shadow-2xs"
+      title={t.allCities}
     >
       <Globe className="w-3.5 h-3.5 text-neutral-500" />
-      <span className="text-[11px]">All Cities</span>
+      <span className="text-[11px]">{t.allCities}</span>
     </button>
   );
 
+  // Shadcn style language toggle switch
+  const languageSwitch = (
+    <div
+      role="group"
+      aria-label="Language switch"
+      className="inline-flex items-center p-0.5 rounded-lg bg-neutral-100/90 border border-neutral-200/80 text-xs shadow-2xs shrink-0"
+    >
+      <button
+        type="button"
+        onClick={() => setLanguage('en')}
+        className={`px-2 py-1 rounded-md text-[11px] font-medium transition-all ${
+          language === 'en'
+            ? 'bg-white text-neutral-900 shadow-xs font-semibold'
+            : 'text-neutral-500 hover:text-neutral-800'
+        }`}
+        aria-pressed={language === 'en'}
+      >
+        EN
+      </button>
+      <button
+        type="button"
+        onClick={() => setLanguage('ar')}
+        className={`px-2 py-1 rounded-md text-[11px] font-medium transition-all ${
+          language === 'ar'
+            ? 'bg-white text-neutral-900 shadow-xs font-semibold'
+            : 'text-neutral-500 hover:text-neutral-800'
+        }`}
+        aria-pressed={language === 'ar'}
+      >
+        العربية
+      </button>
+    </div>
+  );
+
   const actionToolbar = (
-    <div className="flex items-center rounded-lg border border-neutral-200 bg-white divide-x divide-neutral-200 shrink-0">
+    <div className="flex items-center rounded-lg border border-neutral-200/80 bg-white shadow-2xs divide-x rtl:divide-x-reverse divide-neutral-200/80 shrink-0">
       {/* Audio Mute Quick Toggle */}
       <button
         id="btn-quick-mute"
         onClick={onToggleMute}
-        className={`p-2 rounded-l-lg transition-colors ${isMuted
-          ? 'bg-red-50 text-red-600'
-          : 'text-neutral-700 hover:bg-neutral-100'
-          }`}
-        title={isMuted ? 'Unmute Adhan Audio' : 'Mute Adhan Audio'}
+        className={`p-2 rounded-s-lg transition-colors ${
+          isMuted
+            ? 'bg-red-50 text-red-600 hover:bg-red-100'
+            : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
+        }`}
+        title={isMuted ? t.unmuteAudio : t.muteAudio}
+        aria-label={isMuted ? t.unmuteAudio : t.muteAudio}
       >
-        {isMuted ? (
-          <VolumeX className="w-4 h-4" />
-        ) : (
-          <Volume2 className="w-4 h-4" />
-        )}
+        {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
       </button>
 
       {/* Notification Settings */}
       <button
         id="btn-notification-settings"
         onClick={onOpenNotificationModal}
-        className={`relative p-2 transition-colors ${notificationSettings.masterEnabled
-          ? 'text-neutral-700 hover:bg-neutral-100'
-          : 'bg-neutral-50 text-neutral-400 hover:bg-neutral-100'
-          }`}
-        title="Adhan Notification Settings"
+        className={`relative p-2 transition-colors ${
+          notificationSettings.masterEnabled
+            ? 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
+            : 'bg-neutral-50/70 text-neutral-400 hover:bg-neutral-100'
+        }`}
+        title={t.notificationSettings}
+        aria-label={t.notificationSettings}
       >
         <Bell className="w-4 h-4" />
         {notificationSettings.masterEnabled && (
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-black animate-pulse"></span>
+          <span
+            className={`absolute top-1.5 ${isRTL ? 'left-1.5' : 'right-1.5'} w-1.5 h-1.5 rounded-full animate-pulse`}
+            style={{ backgroundColor: 'var(--color-primary)' }}
+          />
         )}
       </button>
 
@@ -110,8 +151,9 @@ export const Header: React.FC<HeaderProps> = ({
       <button
         id="btn-qibla-compass"
         onClick={onOpenQiblaModal}
-        className="p-2 text-neutral-700 hover:bg-neutral-100 transition-colors"
-        title="Qibla Compass Direction"
+        className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 transition-colors"
+        title={t.qiblaCompass}
+        aria-label={t.qiblaCompass}
       >
         <Compass className="w-4 h-4" />
       </button>
@@ -120,8 +162,9 @@ export const Header: React.FC<HeaderProps> = ({
       <button
         id="btn-calc-settings"
         onClick={onOpenSettingsModal}
-        className="p-2 text-neutral-700 hover:bg-neutral-100 rounded-r-lg transition-colors"
-        title="Calculation Methods & Adjustments"
+        className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-e-lg transition-colors"
+        title={t.calculationSettings}
+        aria-label={t.calculationSettings}
       >
         <Settings className="w-4 h-4" />
       </button>
@@ -129,44 +172,48 @@ export const Header: React.FC<HeaderProps> = ({
   );
 
   return (
-    <header className="sticky top-0 z-30 bg-gray-100 border-b border-neutral-200 text-neutral-900">
+    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 text-neutral-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between gap-3 py-2.5">
-
           {/* Logo & Title */}
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 shrink-0 rounded-lg bg-black flex items-center justify-center shadow-xs border border-black">
-              <Mosque className="text-gray-100" />
+          <div className="flex items-center gap-3 min-w-0">
+            <div
+              className="w-9 h-9 shrink-0 rounded-lg flex items-center justify-center shadow-xs transition-colors"
+              style={{ backgroundColor: 'var(--color-primary)' }}
+            >
+              <Mosque className="w-5 h-5 text-white" />
             </div>
             <div className="min-w-0">
-              <h1 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-black flex items-center gap-2">
-                Prayer Times
+              <h1 className="font-sans text-base sm:text-lg font-semibold tracking-tight text-neutral-900 flex items-center gap-2">
+                {t.appTitle}
               </h1>
               <p className="text-[11px] text-neutral-500 truncate hidden sm:block">
-                7-Day Schedule &bull; Multiple Locations
+                {t.appSubtitle}
               </p>
             </div>
           </div>
 
-          {/* Desktop Controls */}
-          <div className="hidden md:flex items-center justify-end gap-2">
-            {/* Quick Location Selector */}
-            <div className="flex items-center bg-neutral-100 border border-neutral-200 rounded-lg p-1 max-w-80 overflow-x-auto scrollbar-none">
-              <MapPin className="w-4 h-4 text-neutral-500 ml-1.5 mr-1 shrink-0" />
+          {/* Controls Right Section */}
+          <div className="flex items-center gap-2.5">
+            {/* Desktop Quick Location Selector */}
+            <div className="hidden md:flex items-center bg-neutral-50 border border-neutral-200/80 rounded-lg p-1 max-w-80 overflow-x-auto scrollbar-none shadow-2xs gap-1">
+              <MapPin className="w-3.5 h-3.5 text-neutral-500 mx-1 shrink-0" />
               {activeLocationDropdown}
               {allCitiesButton}
             </div>
+
+            {/* Language Switch Toggle */}
+            {languageSwitch}
+
+            {/* Action Icon Toolbar */}
+            {actionToolbar}
           </div>
-
-          {/* Action Icon Toolbar */}
-          {actionToolbar}
-
         </div>
 
         {/* Mobile Location Row */}
-        <div className="md:hidden flex items-center gap-2 pb-2.5 pt-1">
-          <div className="flex items-center flex-1 min-w-0 bg-neutral-100 border border-neutral-200 rounded-lg p-1 overflow-x-auto scrollbar-none">
-            <MapPin className="w-4 h-4 text-neutral-500 ml-1.5 mr-1 shrink-0" />
+        <div className="md:hidden flex items-center gap-2 pb-2.5 pt-0.5">
+          <div className="flex items-center flex-1 min-w-0 bg-neutral-50 border border-neutral-200/80 rounded-lg p-1 overflow-x-auto scrollbar-none shadow-2xs gap-1">
+            <MapPin className="w-3.5 h-3.5 text-neutral-500 mx-1 shrink-0" />
             {activeLocationDropdown}
             {allCitiesButton}
           </div>

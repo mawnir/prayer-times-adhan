@@ -1,21 +1,12 @@
 import React, { useState } from 'react';
 import { 
-  Calendar, 
-  ChevronLeft, 
-  ChevronRight, 
   Table as TableIcon, 
   LayoutGrid, 
-  Clock, 
-  Sun, 
-  Sunrise, 
   Sunset, 
-  Moon, 
-  Sparkles,
-  MapPin,
-  CheckCircle
 } from 'lucide-react';
 import { DayPrayerSchedule, LocationItem, PrayerKey } from '../types';
-import { PRAYER_DISPLAY_NAMES, formatPrayerTime } from '../services/prayerService';
+import { formatPrayerTime } from '../services/prayerService';
+import { useLanguage } from '../context/LanguageContext';
 
 interface WeekScheduleViewProps {
   schedule: DayPrayerSchedule[];
@@ -30,11 +21,16 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
   timeFormat,
   timezone,
 }) => {
+  const { language, t } = useLanguage();
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(0);
   const [subView, setSubView] = useState<'cards' | 'table'>('table');
 
   if (!schedule || schedule.length === 0) {
-    return <div className="p-8 text-center text-neutral-400">Loading schedule...</div>;
+    return (
+      <div className="p-8 text-center text-neutral-400 font-medium">
+        Loading schedule...
+      </div>
+    );
   }
 
   const selectedDay = schedule[selectedDayIndex] || schedule[0];
@@ -54,53 +50,58 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       
       {/* Top Controls Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-black font-serif flex items-center gap-2">
-            7-Day Prayer Schedule
-            <span className="text-xs font-sans font-medium text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200">
-              Next Week
+          <h3 className="text-base sm:text-lg font-semibold text-neutral-900 flex items-center gap-2">
+            <span>{t.scheduleTitle}</span>
+            <span 
+              className="text-[11px] font-medium text-white px-2 py-0.5 rounded-full shadow-2xs"
+              style={{ backgroundColor: 'var(--color-primary)' }}
+            >
+              {t.nextWeek}
             </span>
           </h3>
           <p className="text-xs text-neutral-500 mt-0.5">
-            Prayer times for {location.name}, {location.country} across the next 7 days
+            {t.scheduleSubtitle
+              .replace('{city}', location.name)
+              .replace('{country}', location.country)}
           </p>
         </div>
 
-        {/* View Switcher: Full Table vs Day by Day */}
-        <div className="flex items-center bg-neutral-100 p-1 rounded-xl border border-neutral-200 text-xs self-start sm:self-auto">
+        {/* View Switcher: Full Table vs Day by Day (shadcn tabs / segmented button) */}
+        <div className="flex items-center bg-neutral-100 p-1 rounded-lg border border-neutral-200/80 text-xs shadow-2xs self-start sm:self-auto">
           <button
             id="btn-subview-table"
             onClick={() => setSubView('table')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
               subView === 'table'
-                ? 'bg-white text-black shadow-xs font-semibold'
-                : 'text-neutral-500 hover:text-black'
+                ? 'bg-white text-neutral-900 shadow-xs font-semibold'
+                : 'text-neutral-500 hover:text-neutral-800'
             }`}
           >
             <TableIcon className="w-3.5 h-3.5 text-neutral-500" />
-            Weekly Table
+            <span>{t.weeklyTable}</span>
           </button>
           <button
             id="btn-subview-cards"
             onClick={() => setSubView('cards')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
               subView === 'cards'
-                ? 'bg-white text-black shadow-xs font-semibold'
-                : 'text-neutral-500 hover:text-black'
+                ? 'bg-white text-neutral-900 shadow-xs font-semibold'
+                : 'text-neutral-500 hover:text-neutral-800'
             }`}
           >
             <LayoutGrid className="w-3.5 h-3.5 text-neutral-500" />
-            Day Inspector
+            <span>{t.dayInspector}</span>
           </button>
         </div>
       </div>
 
       {/* 7-Day Horizontal Selector Carousel */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center space-x-2 rtl:space-x-reverse overflow-x-auto pb-2 scrollbar-none">
         {schedule.map((day, idx) => {
           const isSelected = idx === selectedDayIndex;
           return (
@@ -108,20 +109,24 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
               key={day.dateKey}
               id={`btn-day-tab-${idx}`}
               onClick={() => setSelectedDayIndex(idx)}
-              className={`flex-shrink-0 flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-150 min-w-[85px] sm:min-w-[95px] text-center ${
+              className={`flex-shrink-0 flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-150 min-w-[85px] sm:min-w-[95px] text-center shadow-2xs ${
                 isSelected
-                  ? 'bg-black text-white border-black shadow-md ring-2 ring-neutral-300'
-                  : 'bg-white text-neutral-700 border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50'
+                  ? 'text-white shadow-xs'
+                  : 'bg-white text-neutral-700 border-neutral-200/80 hover:border-neutral-300 hover:bg-neutral-50'
               }`}
+              style={isSelected ? {
+                backgroundColor: 'var(--color-primary)',
+                borderColor: 'var(--color-primary)',
+              } : undefined}
             >
-              <span className={`text-[11px] uppercase font-semibold ${isSelected ? 'text-neutral-300' : 'text-neutral-400'}`}>
-                {day.isToday ? 'Today' : day.dayName}
+              <span className={`text-[11px] uppercase font-semibold ${isSelected ? 'text-white/80' : 'text-neutral-400'}`}>
+                {day.isToday ? t.today : day.dayName}
               </span>
               <span className="text-lg font-bold font-mono my-0.5">
                 {day.dayNumber} {day.monthName}
               </span>
-              <span className={`text-[10px] truncate max-w-[80px] ${isSelected ? 'text-neutral-300' : 'text-neutral-600 font-medium'}`}>
-                {day.hijriDate.day} {day.hijriDate.monthName.slice(0, 5)}
+              <span className={`text-[10px] truncate max-w-[80px] ${isSelected ? 'text-white/90' : 'text-neutral-500 font-medium'}`}>
+                {day.hijriDate.day} {day.hijriDate.monthName.slice(0, 7)}
               </span>
             </button>
           );
@@ -130,19 +135,27 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
 
       {/* SUBVIEW 1: Complete 7-Day Timetable Grid */}
       {subView === 'table' && (
-        <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xs">
+        <div className="overflow-hidden rounded-xl border border-neutral-200/80 bg-white shadow-xs">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-700 uppercase font-semibold text-xs tracking-wider">
+            <table className="w-full text-start text-sm">
+              <thead className="bg-neutral-50 border-b border-neutral-200/80 text-neutral-600 uppercase font-semibold text-[11px] tracking-wider">
                 <tr>
-                  <th className="py-3.5 px-4 font-bold text-black">Date &amp; Day</th>
-                  <th className="py-3.5 px-3 text-center">Fajr</th>
-                  <th className="py-3.5 px-3 text-center text-neutral-400 font-normal">Sunrise</th>
-                  <th className="py-3.5 px-3 text-center">Dhuhr</th>
-                  <th className="py-3.5 px-3 text-center">Asr</th>
-                  <th className="py-3.5 px-3 text-center font-bold text-black">Maghrib</th>
-                  <th className="py-3.5 px-3 text-center">Isha</th>
-                  <th className="py-3.5 px-4 text-right text-neutral-500 hidden md:table-cell">Fasting</th>
+                  <th className="py-3 px-4 font-semibold text-neutral-900 text-start">{t.dateAndDay}</th>
+                  {prayerCols.map((col) => (
+                    <th 
+                      key={col.key} 
+                      className={`py-3 px-3 text-center ${
+                        col.key === 'maghrib' 
+                          ? 'font-bold text-neutral-900' 
+                          : col.key === 'sunrise'
+                          ? 'text-neutral-400 font-normal'
+                          : ''
+                      }`}
+                    >
+                      {language === 'ar' ? col.ar : col.label}
+                    </th>
+                  ))}
+                  <th className="py-3 px-4 text-end text-neutral-500 hidden md:table-cell">{t.fasting}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100">
@@ -159,28 +172,35 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
                       onClick={() => setSelectedDayIndex(idx)}
                       className={`cursor-pointer transition-colors ${
                         isToday
-                          ? 'bg-neutral-100 font-semibold text-black'
+                          ? 'bg-neutral-50/90 font-medium text-neutral-900'
                           : isSelected
-                          ? 'bg-neutral-50'
-                          : 'hover:bg-neutral-50'
+                          ? 'bg-neutral-50/60'
+                          : 'hover:bg-neutral-50/60'
                       }`}
                     >
                       {/* Date & Hijri column */}
                       <td className="py-3 px-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           {isToday && (
-                            <span className="w-2 h-2 rounded-full bg-black shrink-0" title="Today" />
+                            <span 
+                              className="w-2 h-2 rounded-full shrink-0" 
+                              style={{ backgroundColor: 'var(--color-primary)' }}
+                              title={t.today} 
+                            />
                           )}
                           <div>
-                            <div className="flex items-center gap-1.5 font-bold text-black">
+                            <div className="flex items-center gap-1.5 font-semibold text-neutral-900">
                               <span>{day.dayName}, {day.monthName} {day.dayNumber}</span>
                               {isToday && (
-                                <span className="text-[10px] uppercase px-1.5 py-0.2 rounded-sm bg-black text-white">
-                                  Today
+                                <span 
+                                  className="text-[10px] uppercase px-1.5 py-0.2 rounded text-white font-semibold"
+                                  style={{ backgroundColor: 'var(--color-primary)' }}
+                                >
+                                  {t.today}
                                 </span>
                               )}
                             </div>
-                            <div className="text-[11px] text-neutral-600 font-serif">
+                            <div className="text-[11px] text-neutral-500">
                               {day.hijriDate.formatted}
                             </div>
                           </div>
@@ -188,38 +208,38 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
                       </td>
 
                       {/* Fajr */}
-                      <td className="py-3 px-3 text-center font-mono text-neutral-800">
+                      <td className="py-3 px-3 text-center font-mono text-neutral-800" dir="ltr">
                         {formatPrayerTime(day.prayers.fajr, timeFormat, timezone)}
                       </td>
 
                       {/* Sunrise */}
-                      <td className="py-3 px-3 text-center font-mono text-neutral-400 text-xs">
+                      <td className="py-3 px-3 text-center font-mono text-neutral-400 text-xs" dir="ltr">
                         {formatPrayerTime(day.prayers.sunrise, timeFormat, timezone)}
                       </td>
 
                       {/* Dhuhr */}
-                      <td className="py-3 px-3 text-center font-mono text-neutral-800">
+                      <td className="py-3 px-3 text-center font-mono text-neutral-800" dir="ltr">
                         {formatPrayerTime(day.prayers.dhuhr, timeFormat, timezone)}
                       </td>
 
                       {/* Asr */}
-                      <td className="py-3 px-3 text-center font-mono text-neutral-800">
+                      <td className="py-3 px-3 text-center font-mono text-neutral-800" dir="ltr">
                         {formatPrayerTime(day.prayers.asr, timeFormat, timezone)}
                       </td>
 
                       {/* Maghrib / Iftar */}
-                      <td className="py-3 px-3 text-center font-mono font-bold text-black bg-neutral-100">
+                      <td className="py-3 px-3 text-center font-mono font-bold text-neutral-900 bg-neutral-50/70" dir="ltr">
                         {formatPrayerTime(day.prayers.maghrib, timeFormat, timezone)}
                       </td>
 
                       {/* Isha */}
-                      <td className="py-3 px-3 text-center font-mono text-neutral-800">
+                      <td className="py-3 px-3 text-center font-mono text-neutral-800" dir="ltr">
                         {formatPrayerTime(day.prayers.isha, timeFormat, timezone)}
                       </td>
 
                       {/* Fasting Duration */}
-                      <td className="py-3 px-4 text-right text-xs text-neutral-500 font-mono hidden md:table-cell">
-                        {fHours} hrs
+                      <td className="py-3 px-4 text-end text-xs text-neutral-500 font-mono hidden md:table-cell" dir="ltr">
+                        {fHours} {t.hoursShort}
                       </td>
                     </tr>
                   );
@@ -228,9 +248,11 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
             </table>
           </div>
 
-          <div className="p-3 bg-neutral-50 border-t border-neutral-200 text-xs text-neutral-500 flex items-center justify-between">
-            <span>Click any day to highlight details</span>
-            <span className="text-black font-medium">Times calculated astronomical for {location.name}</span>
+          <div className="p-3 bg-neutral-50/80 border-t border-neutral-200/80 text-xs text-neutral-500 flex items-center justify-between">
+            <span>{t.tableHint}</span>
+            <span className="font-medium text-neutral-700">
+              {t.tableCalculatedFor} {location.name}
+            </span>
           </div>
         </div>
       )}
@@ -240,59 +262,69 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
         <div className="space-y-4">
           
           {/* Day Highlight Card */}
-          <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 rounded-xl bg-neutral-50/80 border border-neutral-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-xl bg-black text-white font-bold text-lg font-mono">
+              <div 
+                className="p-3 rounded-lg text-white font-bold text-lg font-mono shadow-xs"
+                style={{ backgroundColor: 'var(--color-primary)' }}
+              >
                 {selectedDay.dayNumber}
               </div>
               <div>
-                <h4 className="font-bold text-black text-base">
+                <h4 className="font-semibold text-neutral-900 text-base">
                   {selectedDay.dayName}, {selectedDay.monthName} {selectedDay.dayNumber}, {selectedDay.date.getFullYear()}
                 </h4>
-                <p className="text-xs text-neutral-600 font-serif">
+                <p className="text-xs text-neutral-500">
                   {selectedDay.hijriDate.formatted}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-4 text-xs text-neutral-600">
-              <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-neutral-200">
+              <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-md border border-neutral-200/80 shadow-2xs">
                 <Sunset className="w-4 h-4 text-neutral-500" />
-                <span>Fasting window: <strong>{fastingHours} hours</strong></span>
+                <span>{t.fastingWindow}: <strong className="text-neutral-900">{fastingHours} {t.hoursShort}</strong></span>
               </div>
             </div>
           </div>
 
-          {/* 5 Prayers Grid for Selected Day */}
+          {/* 6 Prayers Grid for Selected Day */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {prayerCols.map((col) => {
               const time = selectedDay.prayers[col.key];
               const isSunrise = col.key === 'sunrise';
+              const isMaghrib = col.key === 'maghrib';
 
               return (
                 <div
                   key={col.key}
-                  className={`p-3.5 rounded-xl border flex flex-col justify-between ${
+                  className={`p-3.5 rounded-xl border flex flex-col justify-between transition-all ${
                     isSunrise
-                      ? 'bg-neutral-50 border-neutral-200 text-neutral-600'
-                      : 'bg-white border-neutral-200 text-black shadow-xs'
+                      ? 'bg-neutral-50/80 border-neutral-200/80 text-neutral-600'
+                      : 'bg-white border-neutral-200/80 text-neutral-900 shadow-xs hover:border-neutral-300'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
-                      {col.label}
+                    <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
+                      {language === 'ar' ? col.ar : col.label}
                     </span>
-                    <span className="text-xs font-serif text-neutral-400">
-                      {col.ar}
+                    <span className="text-xs text-neutral-400 font-medium">
+                      {language === 'ar' ? col.label : col.ar}
                     </span>
                   </div>
 
-                  <div className="my-2 font-mono text-xl font-bold">
+                  <div className="my-2.5 font-mono text-xl font-bold tracking-tight" dir="ltr">
                     {formatPrayerTime(time, timeFormat, timezone)}
                   </div>
 
                   <div className="text-[11px] text-neutral-400">
-                    {col.key === 'maghrib' ? 'Iftar / Sunset' : col.key === 'fajr' ? 'Suhoor ends' : isSunrise ? 'Shuruq' : 'Obligatory'}
+                    {isMaghrib
+                      ? t.iftarSunset
+                      : col.key === 'fajr'
+                      ? t.suhoorEnds
+                      : isSunrise
+                      ? t.shuruq
+                      : t.obligatory}
                   </div>
                 </div>
               );
@@ -305,3 +337,4 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
     </div>
   );
 };
+
