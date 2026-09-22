@@ -85,11 +85,10 @@ export const Header: React.FC<HeaderProps> = ({
       <button
         type="button"
         onClick={() => setLanguage('en')}
-        className={`px-2 py-1 rounded-md text-[11px] font-medium transition-all ${
-          language === 'en'
-            ? 'bg-white text-neutral-900 shadow-xs font-semibold'
-            : 'text-neutral-500 hover:text-neutral-800'
-        }`}
+        className={`px-2 py-1 rounded-md text-[11px] font-medium transition-all ${language === 'en'
+          ? 'bg-white text-neutral-900 shadow-xs font-semibold'
+          : 'text-neutral-500 hover:text-neutral-800'
+          }`}
         aria-pressed={language === 'en'}
       >
         EN
@@ -97,11 +96,10 @@ export const Header: React.FC<HeaderProps> = ({
       <button
         type="button"
         onClick={() => setLanguage('ar')}
-        className={`px-2 py-1 rounded-md text-[11px] font-medium transition-all ${
-          language === 'ar'
-            ? 'bg-white text-neutral-900 shadow-xs font-semibold'
-            : 'text-neutral-500 hover:text-neutral-800'
-        }`}
+        className={`px-2 py-1 rounded-md text-[11px] font-medium transition-all ${language === 'ar'
+          ? 'bg-white text-neutral-900 shadow-xs font-semibold'
+          : 'text-neutral-500 hover:text-neutral-800'
+          }`}
         aria-pressed={language === 'ar'}
       >
         العربية
@@ -112,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
   const actionToolbar = (
     <div className="flex items-center rounded-lg border border-neutral-200/80 bg-white shadow-2xs divide-x rtl:divide-x-reverse divide-neutral-200/80 shrink-0">
       {/* Audio Mute Quick Toggle */}
-      <button
+      {/* <button
         id="btn-quick-mute"
         onClick={onToggleMute}
         className={`p-2 rounded-s-lg transition-colors ${
@@ -124,17 +122,16 @@ export const Header: React.FC<HeaderProps> = ({
         aria-label={isMuted ? t.unmuteAudio : t.muteAudio}
       >
         {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-      </button>
+      </button> */}
 
       {/* Notification Settings */}
       <button
         id="btn-notification-settings"
         onClick={onOpenNotificationModal}
-        className={`relative p-2 transition-colors ${
-          notificationSettings.masterEnabled
-            ? 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
-            : 'bg-neutral-50/70 text-neutral-400 hover:bg-neutral-100'
-        }`}
+        className={`relative p-2 transition-colors ${notificationSettings.masterEnabled
+          ? 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
+          : 'bg-neutral-50/70 text-neutral-400 hover:bg-neutral-100'
+          }`}
         title={t.notificationSettings}
         aria-label={t.notificationSettings}
       >
@@ -172,7 +169,7 @@ export const Header: React.FC<HeaderProps> = ({
   );
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 text-neutral-900">
+    <header className="sticky top-0 z-30 bg-neutral-50 backdrop-blur-md border-b border-neutral-200/80 text-neutral-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between gap-3 py-2.5">
           {/* Logo & Title */}

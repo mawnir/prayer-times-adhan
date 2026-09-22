@@ -1,18 +1,16 @@
 import React from 'react';
-import { 
-  X, 
-  Settings, 
-  Compass, 
+import {
+  X,
+  Settings,
   RotateCcw,
-  Sliders,
   Check
 } from 'lucide-react';
-import { 
-  CalculationMethodKey, 
-  CalculationSettings, 
-  HighLatitudeRuleKey, 
-  MadhabKey, 
-  PrayerKey 
+import {
+  CalculationMethodKey,
+  CalculationSettings,
+  HighLatitudeRuleKey,
+  MadhabKey,
+  PrayerKey
 } from '../types';
 import { PRAYER_DISPLAY_NAMES } from '../services/prayerService';
 
@@ -57,13 +55,6 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
     onUpdateSettings({ ...settings, highLatitudeRule });
   };
 
-  const handleTimeFormatToggle = () => {
-    onUpdateSettings({
-      ...settings,
-      timeFormat: settings.timeFormat === '12h' ? '24h' : '12h',
-    });
-  };
-
   const handleOffsetChange = (prayer: PrayerKey, delta: number) => {
     onUpdateSettings({
       ...settings,
@@ -90,18 +81,26 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
 
   const prayersList: PrayerKey[] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
 
+  // Reference to avoid unused-parameter lint while keeping the API stable
+  void handleHighLatChange;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 animate-in fade-in duration-150">
-      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[90vh]">
-        
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 animate-in fade-in duration-150">
+      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[92vh]">
+
         {/* Modal Header */}
-        <div className="p-5 bg-white text-black flex items-center justify-between border-b border-neutral-200">
+        <div className="p-4 sm:p-5 bg-white text-primary flex items-center justify-between border-b border-neutral-200 shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-black text-white">
+            <div className="p-2 rounded-xl bg-primary text-white">
               <Settings className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-lg font-serif">Calculation &amp; Jurisprudence</h3>
+              <h3 className="font-bold text-lg font-serif flex items-center gap-2">
+                Calculation &amp; Jurisprudence
+                <span className="text-[10px] font-sans font-medium px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600 border border-neutral-200">
+                  Fiqh &amp; Astronomy
+                </span>
+              </h3>
               <p className="text-xs text-neutral-500">
                 Astronomical methods, Asr madhab, and minute adjustments
               </p>
@@ -110,31 +109,31 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
           <button
             id="btn-close-calc-modal"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-neutral-500 hover:text-black hover:bg-neutral-100 transition-colors"
+            className="p-1.5 rounded-lg text-neutral-500 hover:text-primary hover:bg-neutral-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto flex-1 space-y-6">
-          
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
+
           {/* Time Display Format */}
-          <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 flex items-center justify-between">
+          <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 flex items-center justify-between gap-3">
             <div>
-              <h4 className="font-bold text-sm text-black">Time Display Format</h4>
+              <h4 className="font-bold text-sm text-neutral-900">Time Display Format</h4>
               <p className="text-xs text-neutral-500">
                 Toggle between standard 12-hour (AM/PM) and 24-hour military format
               </p>
             </div>
-            <div className="flex items-center bg-neutral-200/80 p-1 rounded-xl">
+            <div className="flex items-center bg-neutral-200/80 p-1 rounded-xl shrink-0">
               <button
                 id="btn-format-12h"
                 onClick={() => onUpdateSettings({ ...settings, timeFormat: '12h' })}
                 className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                   settings.timeFormat === '12h'
-                    ? 'bg-white text-black shadow-xs'
-                    : 'text-neutral-500 hover:text-black'
+                    ? 'bg-white text-primary shadow-xs'
+                    : 'text-neutral-500 hover:text-neutral-900'
                 }`}
               >
                 12-Hour
@@ -144,8 +143,8 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 onClick={() => onUpdateSettings({ ...settings, timeFormat: '24h' })}
                 className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                   settings.timeFormat === '24h'
-                    ? 'bg-white text-black shadow-xs'
-                    : 'text-neutral-500 hover:text-black'
+                    ? 'bg-white text-primary shadow-xs'
+                    : 'text-neutral-500 hover:text-neutral-900'
                 }`}
               >
                 24-Hour
@@ -155,25 +154,25 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
 
           {/* Asr Juristic Method (Madhab) */}
           <div className="space-y-2">
-            <h4 className="font-bold text-sm text-black uppercase tracking-wider text-xs">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 px-1">
               Asr Juristic Method (Madhab)
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button
                 id="btn-madhab-shafi"
                 onClick={() => handleMadhabChange('shafi')}
                 className={`p-3.5 rounded-2xl border text-left transition-all ${
                   settings.madhab === 'shafi'
-                    ? 'border-black bg-neutral-100 ring-2 ring-neutral-200'
+                    ? 'border-primary bg-neutral-50/70 shadow-xs'
                     : 'border-neutral-200 hover:border-neutral-300 bg-white'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-black">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-sm text-neutral-900">
                     Standard (Shafi'i, Maliki, Hanbali)
                   </span>
                   {settings.madhab === 'shafi' && (
-                    <Check className="w-4 h-4 text-black" />
+                    <Check className="w-4 h-4 text-primary shrink-0" />
                   )}
                 </div>
                 <p className="text-xs text-neutral-500 mt-1">
@@ -186,16 +185,16 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 onClick={() => handleMadhabChange('hanafi')}
                 className={`p-3.5 rounded-2xl border text-left transition-all ${
                   settings.madhab === 'hanafi'
-                    ? 'border-black bg-neutral-100 ring-2 ring-neutral-200'
+                    ? 'border-primary bg-neutral-50/70 shadow-xs'
                     : 'border-neutral-200 hover:border-neutral-300 bg-white'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-black">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-sm text-neutral-900">
                     Hanafi
                   </span>
                   {settings.madhab === 'hanafi' && (
-                    <Check className="w-4 h-4 text-black" />
+                    <Check className="w-4 h-4 text-primary shrink-0" />
                   )}
                 </div>
                 <p className="text-xs text-neutral-500 mt-1">
@@ -207,9 +206,9 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
 
           {/* Calculation Method Selection */}
           <div className="space-y-2">
-            <h4 className="font-bold text-sm text-black uppercase tracking-wider text-xs">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 px-1">
               Calculation Method &amp; Convention
-            </h4>
+            </span>
             <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
               {calculationMethods.map((m) => {
                 const isSelected = settings.method === m.key;
@@ -218,18 +217,20 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                     key={m.key}
                     id={`method-choice-${m.key}`}
                     onClick={() => handleMethodChange(m.key)}
-                    className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
+                    className={`p-3 rounded-2xl border cursor-pointer transition-all flex items-center justify-between gap-3 ${
                       isSelected
-                        ? 'border-black bg-neutral-100 font-medium'
-                        : 'border-neutral-200 hover:bg-neutral-50 bg-white'
+                        ? 'border-primary bg-neutral-50/70 shadow-xs'
+                        : 'border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/80 bg-white'
                     }`}
                   >
-                    <div>
-                      <div className="text-sm font-bold text-black">{m.label}</div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-bold text-neutral-900">{m.label}</div>
                       <div className="text-xs text-neutral-500">{m.desc}</div>
                     </div>
                     {isSelected && (
-                      <Check className="w-4 h-4 text-black shrink-0 ml-2" />
+                      <span className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-neutral-100 text-primary flex items-center gap-1 shrink-0">
+                        <Check className="w-3.5 h-3.5" /> Selected
+                      </span>
                     )}
                   </div>
                 );
@@ -238,25 +239,25 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
           </div>
 
           {/* Manual Minute Offsets */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between px-1">
               <div>
-                <h4 className="font-bold text-sm text-black uppercase tracking-wider text-xs">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">
                   Manual Minute Adjustments
-                </h4>
+                </span>
                 <p className="text-xs text-neutral-500">
                   Calibrate prayer times to sync with your local mosque (+/- minutes)
                 </p>
               </div>
               <button
                 onClick={handleResetOffsets}
-                className="text-xs text-neutral-500 hover:text-black flex items-center gap-1"
+                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1 shrink-0"
               >
                 <RotateCcw className="w-3 h-3" /> Reset
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {prayersList.map((prayer) => {
                 const meta = PRAYER_DISPLAY_NAMES[prayer];
                 const offset = settings.manualOffsets[prayer] || 0;
@@ -264,25 +265,25 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 return (
                   <div
                     key={prayer}
-                    className="p-2.5 rounded-xl border border-neutral-200 bg-white flex items-center justify-between"
+                    className="p-2.5 rounded-2xl border border-neutral-200 bg-white flex items-center justify-between gap-2"
                   >
-                    <span className="text-xs font-bold text-neutral-800 capitalize">
+                    <span className="text-xs font-bold text-neutral-900 capitalize">
                       {meta.en}
                     </span>
 
                     <div className="flex items-center space-x-1.5">
                       <button
                         onClick={() => handleOffsetChange(prayer, offset - 1)}
-                        className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center font-bold text-xs"
+                        className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-primary flex items-center justify-center font-bold text-xs transition-colors"
                       >
                         -
                       </button>
-                      <span className="w-8 text-center text-xs font-mono font-bold text-black">
+                      <span className="w-8 text-center text-xs font-mono font-bold text-primary">
                         {offset > 0 ? `+${offset}` : offset}m
                       </span>
                       <button
                         onClick={() => handleOffsetChange(prayer, offset + 1)}
-                        className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center font-bold text-xs"
+                        className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-primary flex items-center justify-center font-bold text-xs transition-colors"
                       >
                         +
                       </button>
@@ -296,10 +297,11 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 bg-neutral-50 border-t border-neutral-200 flex justify-end">
+        <div className="p-3 bg-neutral-50 border-t border-neutral-200 flex items-center justify-between text-xs text-neutral-500 shrink-0">
+          <span>Method: <strong className="text-primary">{calculationMethods.find((m) => m.key === settings.method)?.label}</strong></span>
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-colors"
+            className="px-4 py-1.5 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold transition-all shadow-xs"
           >
             Apply &amp; Close
           </button>

@@ -1,10 +1,8 @@
 import React from 'react';
-import { 
-  X, 
-  Compass, 
-  MapPin, 
-  Navigation, 
-  Info 
+import {
+  X,
+  Compass,
+  MapPin
 } from 'lucide-react';
 import { LocationItem } from '../types';
 import { getQiblaInfo } from '../services/prayerService';
@@ -42,17 +40,22 @@ export const QiblaModal: React.FC<QiblaModalProps> = ({
   const distanceKm = getDistanceKm(location.latitude, location.longitude, 21.4225, 39.8262);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 animate-in fade-in duration-150">
-      <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col text-center">
-        
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 animate-in fade-in duration-150">
+      <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[92vh] text-center">
+
         {/* Header */}
-        <div className="p-5 bg-white text-black flex items-center justify-between border-b border-neutral-200">
+        <div className="p-4 sm:p-5 bg-white text-primary flex items-center justify-between border-b border-neutral-200 shrink-0">
           <div className="flex items-center space-x-3 text-left">
-            <div className="p-2 rounded-xl bg-black text-white">
+            <div className="p-2 rounded-xl bg-primary text-white">
               <Compass className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-lg font-serif">Qibla Direction</h3>
+              <h3 className="font-bold text-lg font-serif flex items-center gap-2">
+                Qibla Direction
+                <span className="text-[10px] font-sans font-medium px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600 border border-neutral-200">
+                  Kaaba Compass
+                </span>
+              </h3>
               <p className="text-xs text-neutral-500">
                 Direction towards the Kaaba in Makkah
               </p>
@@ -61,17 +64,17 @@ export const QiblaModal: React.FC<QiblaModalProps> = ({
           <button
             id="btn-close-qibla-modal"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-neutral-500 hover:text-black hover:bg-neutral-100 transition-colors"
+            className="p-1.5 rounded-lg text-neutral-500 hover:text-primary hover:bg-neutral-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Compass Body */}
-        <div className="p-6 space-y-6">
-          
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-700 text-xs font-semibold">
-            <MapPin className="w-3.5 h-3.5 text-neutral-500" />
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
+
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-600 text-xs font-medium">
+            <MapPin className="w-3.5 h-3.5 text-primary" />
             From: {location.name}, {location.country}
           </div>
 
@@ -82,13 +85,13 @@ export const QiblaModal: React.FC<QiblaModalProps> = ({
             <div className="absolute inset-0 rounded-full border-4 border-neutral-200 shadow-inner flex items-center justify-center bg-neutral-50">
               
               {/* N, E, S, W labels */}
-              <span className="absolute top-2 font-bold text-xs text-black">N</span>
+              <span className="absolute top-2 font-bold text-xs text-primary">N</span>
               <span className="absolute right-2 font-bold text-xs text-neutral-500">E</span>
               <span className="absolute bottom-2 font-bold text-xs text-neutral-500">S</span>
               <span className="absolute left-2 font-bold text-xs text-neutral-500">W</span>
 
               {/* Tick marks */}
-              <div className="absolute top-0 w-0.5 h-2 bg-black" />
+              <div className="absolute top-0 w-0.5 h-2 bg-primary" />
               <div className="absolute right-0 h-0.5 w-2 bg-neutral-400" />
               <div className="absolute bottom-0 w-0.5 h-2 bg-neutral-400" />
               <div className="absolute left-0 h-0.5 w-2 bg-neutral-400" />
@@ -103,49 +106,49 @@ export const QiblaModal: React.FC<QiblaModalProps> = ({
               <div className="flex flex-col items-center h-full justify-between py-5">
                 {/* Pointer tip with Kaaba Icon */}
                 <div className="flex flex-col items-center">
-                  <div className="w-6 h-6 rounded-lg bg-black text-white shadow-md flex items-center justify-center text-xs">
+                  <div className="w-6 h-6 rounded-lg bg-primary text-white shadow-xs flex items-center justify-center text-xs">
                     🕋
                   </div>
-                  <div className="w-0.5 h-12 bg-black rounded-full" />
+                  <div className="w-0.5 h-12 bg-primary rounded-full" />
                 </div>
                 <div className="w-0.5 h-8 bg-neutral-300 rounded-full" />
               </div>
             </div>
 
             {/* Center Pivot Point */}
-            <div className="w-6 h-6 rounded-full bg-black border-2 border-white shadow-md z-10 flex items-center justify-center text-[9px] text-white font-bold">
+            <div className="w-6 h-6 rounded-full bg-primary border-2 border-white shadow-md z-10 flex items-center justify-center text-[9px] text-white font-bold">
               •
             </div>
 
           </div>
 
           {/* Details */}
-          <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-2xl bg-neutral-50 border border-neutral-200">
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="p-3 rounded-2xl bg-neutral-50/70 border border-primary shadow-xs">
               <span className="text-neutral-400 block text-[11px]">Qibla Angle</span>
-              <span className="text-xl font-bold font-mono text-black">
+              <span className="text-xl font-bold font-mono text-primary">
                 {angle}° {cardinal}
               </span>
             </div>
             <div className="p-3 rounded-2xl bg-neutral-50 border border-neutral-200">
               <span className="text-neutral-400 block text-[11px]">Distance to Kaaba</span>
-              <span className="text-xl font-bold font-mono text-black">
+              <span className="text-xl font-bold font-mono text-primary">
                 {distanceKm.toLocaleString()} km
               </span>
             </div>
           </div>
 
           <p className="text-xs text-neutral-500 leading-relaxed">
-            Face <strong>{angle}° {cardinal}</strong> from True North to orient toward the Sacred Sanctuary (Al-Masjid Al-Haram in Makkah).
+            Face <strong className="text-primary">{angle}° {cardinal}</strong> from True North to orient toward the Sacred Sanctuary (Al-Masjid Al-Haram in Makkah).
           </p>
 
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-neutral-50 border-t border-neutral-200">
+        <div className="p-3 bg-neutral-50 border-t border-neutral-200 shrink-0">
           <button
             onClick={onClose}
-            className="w-full py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-colors"
+            className="w-full py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold transition-all shadow-xs"
           >
             Close Compass
           </button>

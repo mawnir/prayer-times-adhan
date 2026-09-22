@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-  Compass, 
-  MapPin, 
-  CalendarDays, 
-  Volume2, 
-  Square, 
+import {
+  Compass,
+  MapPin,
+  CalendarDays,
+  Volume2,
+  Square,
 } from 'lucide-react';
 import { CurrentPrayerStatus, LocationItem } from '../types';
 import { PRAYER_DISPLAY_NAMES } from '../services/prayerService';
@@ -54,18 +54,18 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
   const nextPrayerSecondary = language === 'ar' ? nextPrayerMeta.en : nextPrayerMeta.ar;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-white border border-neutral-200/80 p-6 sm:p-8 text-neutral-900 shadow-sm transition-all">
+    <div className="relative overflow-hidden rounded-2xl bg-neutral-50 border border-neutral-200/80 p-6 sm:p-8 text-neutral-900 shadow-sm transition-all">
       {/* Decorative subtle background ambient tint matching #79697B */}
-      <div 
+      <div
         className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 rounded-full opacity-[0.06] blur-3xl"
         style={{ backgroundColor: 'var(--color-primary)' }}
       />
 
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        
+
         {/* Left column: Location & Date & Next Prayer info */}
         <div className="space-y-4 max-w-xl flex-1">
-          
+
           {/* Location & Hijri badges (shadcn badge styling) */}
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <button
@@ -76,7 +76,7 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
             >
               <MapPin className="w-3.5 h-3.5 text-neutral-500 group-hover:scale-105 transition-transform" />
               <span>{location.name}, {location.country}</span>
-              <span 
+              <span
                 className="text-[10px] px-1.5 py-0.5 rounded text-white font-semibold transition-colors"
                 style={{ backgroundColor: 'var(--color-primary)' }}
               >
@@ -119,7 +119,7 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
                 {timeFormatted}
               </span>
             </div>
-            
+
             <p className="text-xs sm:text-sm text-neutral-500">
               {nextPrayerMeta.meaning}
             </p>
@@ -134,9 +134,9 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
             <div className="h-2 w-full rounded-full bg-neutral-100 border border-neutral-200/80 overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-1000 ease-out"
-                style={{ 
+                style={{
                   width: `${Math.max(5, status.progressPercent)}%`,
-                  backgroundColor: 'var(--color-primary)' 
+                  backgroundColor: 'var(--color-primary)'
                 }}
               />
             </div>
@@ -146,13 +146,13 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
         {/* Right column: Large Countdown Timer Card & Quick Adhan Control */}
         <div className="flex flex-col items-center sm:items-end justify-center">
           <div className="w-full sm:w-64 p-5 sm:p-6 rounded-xl bg-neutral-50/80 border border-neutral-200/80 shadow-xs flex flex-col items-center text-center">
-            
+
             <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
               {t.timeRemaining}
             </span>
 
             {/* Large Countdown display */}
-            <div 
+            <div
               className="my-2.5 font-mono text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900"
               dir="ltr"
             >
