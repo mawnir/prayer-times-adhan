@@ -90,12 +90,40 @@ export function getCalculationParameters(settings: CalculationSettings): Calcula
 }
 
 // Convert Gregorian to Hijri accurately
-export function getHijriDate(date: Date): { day: number; monthName: string; year: number; formatted: string } {
+export function getHijriDate(date: Date): {
+  day: number;
+  monthName: string;
+  monthNameAr: string;
+  monthIndex: number;
+  year: number;
+  formatted: string;
+  formattedAr: string;
+} {
   const hijriMonths = [
     'Muharram', 'Safar', 'Rabi al-Awwal', 'Rabi al-Thani',
     'Jumada al-Awwal', 'Jumada al-Thani', 'Rajab', "Sha'ban",
     'Ramadan', 'Shawwal', "Dhu al-Qi'dah", 'Dhu al-Hijjah'
   ];
+  const hijriMonthsAr = [
+    'محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني',
+    'جمادى الأولى', 'جمادى الثانية', 'رجب', 'شعبان',
+    'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'
+  ];
+  const toArDigits = (n: number) => new Intl.NumberFormat('ar-EG').format(n);
+
+  const buildResult = (day: number, monthIndex: number, year: number) => {
+    const monthName = hijriMonths[monthIndex] || 'Islamic Month';
+    const monthNameAr = hijriMonthsAr[monthIndex] || 'شهر هجري';
+    return {
+      day,
+      monthName,
+      monthNameAr,
+      monthIndex,
+      year,
+      formatted: `${day} ${monthName} ${year} AH`,
+      formattedAr: `${toArDigits(day)} ${monthNameAr} ${toArDigits(year)}هـ`,
+    };
+  };
 
   try {
     // Use Intl.DateTimeFormat with islamic-umalqura calendar if supported
@@ -108,14 +136,8 @@ export function getHijriDate(date: Date): { day: number; monthName: string; year
     const day = parseInt(parts.find(p => p.type === 'day')?.value || '1', 10);
     const monthIndex = Math.max(0, Math.min(11, parseInt(parts.find(p => p.type === 'month')?.value || '1', 10) - 1));
     const year = parseInt(parts.find(p => p.type === 'year')?.value || '1448', 10);
-    const monthName = hijriMonths[monthIndex] || 'Islamic Month';
 
-    return {
-      day,
-      monthName,
-      year,
-      formatted: `${day} ${monthName} ${year} AH`,
-    };
+    return buildResult(day, monthIndex, year);
   } catch {
     // Fallback astronomical calculation
     const jd = Math.floor((date.getTime() / 86400000) + 2440587.5);
@@ -127,13 +149,7 @@ export function getHijriDate(date: Date): { day: number; monthName: string; year
     const m = Math.floor((24 * l3) / 709);
     const d = l3 - Math.floor((709 * m) / 24);
     const y = 30 * n + j - 30;
-    const monthName = hijriMonths[Math.max(0, Math.min(11, m - 1))] || 'Ramadan';
-    return {
-      day: d,
-      monthName,
-      year: y,
-      formatted: `${d} ${monthName} ${y} AH`,
-    };
+    return buildResult(d, Math.max(0, Math.min(11, m - 1)), y);
   }
 }
 
@@ -208,8 +224,9 @@ export function calculateWeekSchedule(
 
 // Morocco moved to UTC+00:00 in September 2026, but many browsers/OS still
 // ship stale IANA data that resolves these zones as UTC+01:00. Pin them to a
-// fixed UTC offset so prayer times render correctly regardless of tzdata.
-const FIXED_UTC_OFFSET_MINUTES: Record<string, number> = {
+// fixed UTC offset so all clocks (prayer times + current time) render
+// correctly and consistently regardless of tzdata.
+export const FIXED_UTC_OFFSET_MINUTES: Record<string, number> = {
   'Africa/Casablanca': 0,
   'Africa/El_Aaiun': 0,
 };

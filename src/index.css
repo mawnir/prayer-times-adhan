@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Class-based dark mode: toggle the `dark` class on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @font-face {
   font-family: "Geist";
   src: url("../node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2") format("woff2-variations");
@@ -28,6 +31,18 @@
     "Segoe UI", Roboto, sans-serif;
   --font-serif: "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Dark theme tokens — override on :root when the `dark` class is present */
+:root.dark {
+  color-scheme: dark;
+  --color-background: #0a0a0a;
+  --color-foreground: #fafafa;
+  --color-muted: #171717;
+  --color-muted-border: #2e2e2e;
+  --color-secondary-text: #4ade80;
+  --color-primary: #63a576ff;
+  --color-primary-hover: #74a180;
 }
 
 body {

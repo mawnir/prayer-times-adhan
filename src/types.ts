@@ -71,8 +71,11 @@ export interface DayPrayerSchedule {
   hijriDate: {
     day: number;
     monthName: string;
+    monthNameAr: string;
+    monthIndex: number;
     year: number;
     formatted: string;
+    formattedAr: string;
   };
   prayers: {
     fajr: Date;

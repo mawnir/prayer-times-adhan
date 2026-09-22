@@ -86,10 +86,10 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 animate-in fade-in duration-150">
-      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="bg-white dark:bg-neutral-900 w-full max-w-3xl rounded-3xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden flex flex-col max-h-[92vh]">
 
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 bg-white text-primary flex items-center justify-between border-b border-neutral-200 shrink-0">
+        <div className="p-4 sm:p-5 bg-white dark:bg-neutral-900 text-primary flex items-center justify-between border-b border-neutral-200 dark:border-neutral-700 shrink-0">
           <div className="flex items-center space-x-3">
             <div className="p-2 rounded-xl bg-primary text-white">
               <Settings className="w-5 h-5" />
@@ -97,11 +97,11 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
             <div>
               <h3 className="font-bold text-lg font-serif flex items-center gap-2">
                 Calculation &amp; Jurisprudence
-                <span className="text-[10px] font-sans font-medium px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600 border border-neutral-200">
+                <span className="text-[10px] font-sans font-medium px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
                   Fiqh &amp; Astronomy
                 </span>
               </h3>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
                 Astronomical methods, Asr madhab, and minute adjustments
               </p>
             </div>
@@ -109,7 +109,7 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
           <button
             id="btn-close-calc-modal"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-neutral-500 hover:text-primary hover:bg-neutral-100 transition-colors"
+            className="p-1.5 rounded-lg text-neutral-500 dark:text-neutral-400 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -119,21 +119,21 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
         <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
 
           {/* Time Display Format */}
-          <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 flex items-center justify-between gap-3">
+          <div className="p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-between gap-3">
             <div>
-              <h4 className="font-bold text-sm text-neutral-900">Time Display Format</h4>
-              <p className="text-xs text-neutral-500">
+              <h4 className="font-bold text-sm text-neutral-900 dark:text-neutral-100">Time Display Format</h4>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
                 Toggle between standard 12-hour (AM/PM) and 24-hour military format
               </p>
             </div>
-            <div className="flex items-center bg-neutral-200/80 p-1 rounded-xl shrink-0">
+            <div className="flex items-center bg-neutral-200/80 dark:bg-neutral-700/80 p-1 rounded-xl shrink-0">
               <button
                 id="btn-format-12h"
                 onClick={() => onUpdateSettings({ ...settings, timeFormat: '12h' })}
                 className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                   settings.timeFormat === '12h'
-                    ? 'bg-white text-primary shadow-xs'
-                    : 'text-neutral-500 hover:text-neutral-900'
+                    ? 'bg-white dark:bg-neutral-900 text-primary shadow-xs'
+                    : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
                 }`}
               >
                 12-Hour
@@ -143,8 +143,8 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 onClick={() => onUpdateSettings({ ...settings, timeFormat: '24h' })}
                 className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                   settings.timeFormat === '24h'
-                    ? 'bg-white text-primary shadow-xs'
-                    : 'text-neutral-500 hover:text-neutral-900'
+                    ? 'bg-white dark:bg-neutral-900 text-primary shadow-xs'
+                    : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
                 }`}
               >
                 24-Hour
@@ -154,7 +154,7 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
 
           {/* Asr Juristic Method (Madhab) */}
           <div className="space-y-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 px-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 px-1">
               Asr Juristic Method (Madhab)
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -163,19 +163,19 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 onClick={() => handleMadhabChange('shafi')}
                 className={`p-3.5 rounded-2xl border text-left transition-all ${
                   settings.madhab === 'shafi'
-                    ? 'border-primary bg-neutral-50/70 shadow-xs'
-                    : 'border-neutral-200 hover:border-neutral-300 bg-white'
+                    ? 'border-primary bg-neutral-50/70 dark:bg-neutral-800/70 shadow-xs'
+                    : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 bg-white dark:bg-neutral-900'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-bold text-sm text-neutral-900">
+                  <span className="font-bold text-sm text-neutral-900 dark:text-neutral-100">
                     Standard (Shafi'i, Maliki, Hanbali)
                   </span>
                   {settings.madhab === 'shafi' && (
                     <Check className="w-4 h-4 text-primary shrink-0" />
                   )}
                 </div>
-                <p className="text-xs text-neutral-500 mt-1">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                   Shadow length equals object height (1x shadow ratio).
                 </p>
               </button>
@@ -185,19 +185,19 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 onClick={() => handleMadhabChange('hanafi')}
                 className={`p-3.5 rounded-2xl border text-left transition-all ${
                   settings.madhab === 'hanafi'
-                    ? 'border-primary bg-neutral-50/70 shadow-xs'
-                    : 'border-neutral-200 hover:border-neutral-300 bg-white'
+                    ? 'border-primary bg-neutral-50/70 dark:bg-neutral-800/70 shadow-xs'
+                    : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 bg-white dark:bg-neutral-900'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-bold text-sm text-neutral-900">
+                  <span className="font-bold text-sm text-neutral-900 dark:text-neutral-100">
                     Hanafi
                   </span>
                   {settings.madhab === 'hanafi' && (
                     <Check className="w-4 h-4 text-primary shrink-0" />
                   )}
                 </div>
-                <p className="text-xs text-neutral-500 mt-1">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                   Shadow length equals twice object height (2x shadow ratio, later Asr).
                 </p>
               </button>
@@ -206,7 +206,7 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
 
           {/* Calculation Method Selection */}
           <div className="space-y-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 px-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 px-1">
               Calculation Method &amp; Convention
             </span>
             <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
@@ -219,16 +219,16 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                     onClick={() => handleMethodChange(m.key)}
                     className={`p-3 rounded-2xl border cursor-pointer transition-all flex items-center justify-between gap-3 ${
                       isSelected
-                        ? 'border-primary bg-neutral-50/70 shadow-xs'
-                        : 'border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/80 bg-white'
+                        ? 'border-primary bg-neutral-50/70 dark:bg-neutral-800/70 shadow-xs'
+                        : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 hover:bg-neutral-50/80 dark:hover:bg-neutral-800/80 bg-white dark:bg-neutral-900'
                     }`}
                   >
                     <div className="min-w-0">
-                      <div className="text-sm font-bold text-neutral-900">{m.label}</div>
-                      <div className="text-xs text-neutral-500">{m.desc}</div>
+                      <div className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{m.label}</div>
+                      <div className="text-xs text-neutral-500 dark:text-neutral-400">{m.desc}</div>
                     </div>
                     {isSelected && (
-                      <span className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-neutral-100 text-primary flex items-center gap-1 shrink-0">
+                      <span className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-neutral-100 dark:bg-neutral-800 text-primary flex items-center gap-1 shrink-0">
                         <Check className="w-3.5 h-3.5" /> Selected
                       </span>
                     )}
@@ -242,10 +242,10 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
           <div className="space-y-2">
             <div className="flex items-center justify-between px-1">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
                   Manual Minute Adjustments
                 </span>
-                <p className="text-xs text-neutral-500">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
                   Calibrate prayer times to sync with your local mosque (+/- minutes)
                 </p>
               </div>
@@ -265,16 +265,16 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                 return (
                   <div
                     key={prayer}
-                    className="p-2.5 rounded-2xl border border-neutral-200 bg-white flex items-center justify-between gap-2"
+                    className="p-2.5 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex items-center justify-between gap-2"
                   >
-                    <span className="text-xs font-bold text-neutral-900 capitalize">
+                    <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 capitalize">
                       {meta.en}
                     </span>
 
                     <div className="flex items-center space-x-1.5">
                       <button
                         onClick={() => handleOffsetChange(prayer, offset - 1)}
-                        className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-primary flex items-center justify-center font-bold text-xs transition-colors"
+                        className="w-6 h-6 rounded-md bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-400 hover:text-primary flex items-center justify-center font-bold text-xs transition-colors"
                       >
                         -
                       </button>
@@ -283,7 +283,7 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
                       </span>
                       <button
                         onClick={() => handleOffsetChange(prayer, offset + 1)}
-                        className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-primary flex items-center justify-center font-bold text-xs transition-colors"
+                        className="w-6 h-6 rounded-md bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-400 hover:text-primary flex items-center justify-center font-bold text-xs transition-colors"
                       >
                         +
                       </button>
@@ -297,7 +297,7 @@ export const CalculationSettingsModal: React.FC<CalculationSettingsModalProps> =
         </div>
 
         {/* Modal Footer */}
-        <div className="p-3 bg-neutral-50 border-t border-neutral-200 flex items-center justify-between text-xs text-neutral-500 shrink-0">
+        <div className="p-3 bg-neutral-50 dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700 flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400 shrink-0">
           <span>Method: <strong className="text-primary">{calculationMethods.find((m) => m.key === settings.method)?.label}</strong></span>
           <button
             onClick={onClose}

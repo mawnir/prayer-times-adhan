@@ -12,6 +12,8 @@ export interface Translations {
   notificationSettings: string;
   qiblaCompass: string;
   calculationSettings: string;
+  switchToDarkMode: string;
+  switchToLightMode: string;
   english: string;
   arabic: string;
   // Hero & General
@@ -42,6 +44,8 @@ export interface Translations {
   adhanPlaying: string;
   current: string;
   next: string;
+  currentTime: string;
+  live: string;
   hoursShort: string;
   tableHint: string;
   tableCalculatedFor: string;
@@ -67,6 +71,8 @@ const translations: Record<Language, Translations> = {
     notificationSettings: 'Adhan Notification Settings',
     qiblaCompass: 'Qibla Compass Direction',
     calculationSettings: 'Calculation Methods & Adjustments',
+    switchToDarkMode: 'Switch to dark theme',
+    switchToLightMode: 'Switch to light theme',
     english: 'EN',
     arabic: 'العربية',
     currentPrayer: 'Current Prayer',
@@ -96,6 +102,8 @@ const translations: Record<Language, Translations> = {
     adhanPlaying: 'Adhan audio playing...',
     current: 'Current',
     next: 'Next',
+    currentTime: 'Current Time',
+    live: 'Live',
     hoursShort: 'hrs',
     tableHint: 'Click any day to highlight details',
     tableCalculatedFor: 'Times calculated astronomical for',
@@ -119,6 +127,8 @@ const translations: Record<Language, Translations> = {
     notificationSettings: 'إعدادات تنبيهات الأذان',
     qiblaCompass: 'اتجاه القبلة',
     calculationSettings: 'طرق الحساب والتعديلات',
+    switchToDarkMode: 'التبديل إلى المظهر الداكن',
+    switchToLightMode: 'التبديل إلى المظهر الفاتح',
     english: 'EN',
     arabic: 'العربية',
     currentPrayer: 'الصلاة الحالية',
@@ -148,6 +158,8 @@ const translations: Record<Language, Translations> = {
     adhanPlaying: 'جاري تشغيل صوت الأذان...',
     current: 'الحالية',
     next: 'القادمة',
+    currentTime: 'الوقت الحالي',
+    live: 'مباشر',
     hoursShort: 'ساعة',
     tableHint: 'انقر على أي يوم لعرض التفاصيل',
     tableCalculatedFor: 'أوقات محسوبة فلكياً لـ',

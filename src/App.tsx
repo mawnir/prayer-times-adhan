@@ -292,7 +292,7 @@ export default function App() {
   }, [prayerStatus.nextPrayerTime, calculationSettings.timeFormat, activeLocation.timezone]);
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans selection:bg-black selection:text-white">
+    <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans selection:bg-black selection:text-white dark:bg-neutral-950 dark:text-neutral-100 dark:selection:bg-white dark:selection:text-neutral-900">
 
       {/* Top Application Header */}
       <Header
@@ -316,7 +316,9 @@ export default function App() {
             location={activeLocation}
             status={prayerStatus}
             hijriFormatted={todaySchedule.hijriDate.formatted}
+            hijriDate={todaySchedule.hijriDate}
             timeFormatted={formattedNextPrayerTime}
+            currentTime={currentTime}
             isAudioPlaying={isAudioPlaying}
             onStopAudio={handleStopAudio}
             onTestAdhan={handleTestAdhan}
@@ -338,7 +340,7 @@ export default function App() {
       </main>
 
       {/* Elegant Footer */}
-      <footer className="border-t border-neutral-200/80 bg-white py-6 text-xs text-neutral-500">
+      <footer className="border-t border-neutral-200/80 bg-white py-6 text-xs text-neutral-500 dark:border-neutral-700/80 dark:bg-neutral-950 dark:text-neutral-400">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <div 
@@ -347,28 +349,28 @@ export default function App() {
             >
               <Mosque size={13} className="text-white" />
             </div>
-            <span className="font-semibold text-neutral-900">Prayer Times &amp; Adhan</span>
+            <span className="font-semibold text-neutral-900 dark:text-neutral-100">Prayer Times &amp; Adhan</span>
             <span>&bull; Multiple Locations &bull; 7-Day Schedule</span>
           </div>
 
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
             <button
               onClick={() => setIsSettingsModalOpen(true)}
-              className="hover:text-neutral-900 underline transition-colors"
+              className="hover:text-neutral-900 underline transition-colors dark:hover:text-neutral-100"
             >
               Calculation: {calculationSettings.method}
             </button>
             <span>&bull;</span>
             <button
               onClick={() => setIsNotificationModalOpen(true)}
-              className="hover:text-neutral-900 underline transition-colors"
+              className="hover:text-neutral-900 underline transition-colors dark:hover:text-neutral-100"
             >
               Adhan Notifications
             </button>
             <span>&bull;</span>
             <button
               onClick={() => setIsLocationModalOpen(true)}
-              className="hover:text-neutral-900 underline transition-colors"
+              className="hover:text-neutral-900 underline transition-colors dark:hover:text-neutral-100"
             >
               Manage Cities
             </button>
