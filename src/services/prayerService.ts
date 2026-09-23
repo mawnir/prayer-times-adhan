@@ -320,10 +320,10 @@ export function formatCountdown(totalSeconds: number, language: 'en' | 'ar'): st
   const number = (value: number) => countdownFormatters[language].format(value);
   const units = language === 'ar' ? { h: 'س', m: 'د', s: 'ث' } : { h: 'h', m: 'm', s: 's' };
   const parts = hours > 0
-    ? [`${number(hours)} ${units.h}`, `${number(minutes)} ${units.m}`, `${number(seconds)} ${units.s}`]
+    ? [`${number(hours)}${units.h}`, `${number(minutes)}${units.m}`, `${number(seconds)}${units.s}`]
     : minutes > 0
-      ? [`${number(minutes)} ${units.m}`, `${number(seconds)} ${units.s}`]
-      : [`${number(seconds)} ${units.s}`];
+      ? [`${number(minutes)}${units.m}`, `${number(seconds)}${units.s}`]
+      : [`${number(seconds)}${units.s}`];
 
   return parts.join(' ');
 }

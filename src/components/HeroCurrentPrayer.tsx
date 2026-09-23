@@ -175,7 +175,7 @@ export const HeroCurrentPrayer: FC<HeroCurrentPrayerProps> = ({
           <div className="orbit-core">
             <span className="text-[0.68rem] font-medium text-white/48">{t.timeRemaining}</span>
             <time
-              className="countdown-value my-3 text-white"
+              className="countdown-value my-3 max-w-full whitespace-nowrap px-1 text-center text-[clamp(1.35rem,3.5vw,2.1rem)] tracking-[-0.04em] text-white"
               dateTime={status.nextPrayerTime.toISOString()}
               dir={language === 'ar' ? 'rtl' : 'ltr'}
               aria-live="off"
