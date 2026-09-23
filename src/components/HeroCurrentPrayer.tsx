@@ -1,9 +1,18 @@
-import type { FC } from 'react';
+import type { CSSProperties, FC } from 'react';
 import { Clock, Compass, MapPin, Square } from 'lucide-react';
-import { CurrentPrayerStatus, LocationItem } from '../types';
+import type { CurrentPrayerStatus, LocationItem, PrayerKey } from '../types';
 import { FIXED_UTC_OFFSET_MINUTES, formatCountdown, PRAYER_DISPLAY_NAMES } from '../services/prayerService';
 import { formatLocationDisplay } from '../services/locationLocalization';
 import { useLanguage } from '../context/LanguageContext';
+
+const PRAYER_BACKGROUNDS: Record<PrayerKey, string> = {
+  fajr: '/fajr-img.jpg',
+  sunrise: '/fajr-img.jpg',
+  dhuhr: '/dhuhr-img.jpeg',
+  asr: '/asr-img.jpg',
+  maghrib: '/maghrib-img.jpg',
+  isha: '/isha-img.jpg',
+};
 
 interface HeroCurrentPrayerProps {
   location: LocationItem;
@@ -69,9 +78,25 @@ export const HeroCurrentPrayer: FC<HeroCurrentPrayerProps> = ({
   const progress = Math.max(0, Math.min(100, status.progressPercent));
   const progressDegrees = progress * 3.6;
   const orbitBackground = `repeating-conic-gradient(from -90deg, rgba(236,244,239,.28) 0deg .55deg, transparent .55deg 7.5deg), conic-gradient(from -90deg, #c8a35b 0deg ${progressDegrees}deg, rgba(236,244,239,.11) ${progressDegrees}deg 360deg)`;
+  const currentPrayerBackground = PRAYER_BACKGROUNDS[
+    status.currentPrayer === 'none' ? 'fajr' : status.currentPrayer
+  ];
+  const heroStyle: CSSProperties = {
+    backgroundImage: [
+      'linear-gradient(180deg, rgba(5, 24, 30, 0.18) 0%, rgba(5, 24, 30, 0.38) 55%, rgba(5, 24, 30, 0.78) 100%)',
+      'linear-gradient(90deg, rgba(5, 24, 30, 0.58) 0%, rgba(5, 24, 30, 0.2) 74%)',
+      `url("${currentPrayerBackground}")`,
+    ].join(', '),
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
+  };
 
   return (
-    <section className="celestial-hero px-5 py-6 sm:px-8 sm:py-8 lg:px-10" aria-labelledby="next-prayer-title">
+    <section
+      className="celestial-hero px-5 py-6 sm:px-8 sm:py-8 lg:px-10"
+      style={heroStyle}
+      aria-labelledby="next-prayer-title"
+    >
       <div className="relative z-10 flex items-center justify-between gap-3">
         <button
           id="btn-hero-location"
