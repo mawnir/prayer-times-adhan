@@ -2,6 +2,7 @@ import React from 'react';
 import { Square, Sparkles, MapPin, CheckCircle2, X } from 'lucide-react';
 import { ActiveAdhanAlert } from '../types';
 import { PRAYER_DISPLAY_NAMES } from '../services/prayerService';
+import { useLanguage } from '../context/LanguageContext';
 
 interface ActiveAdhanModalProps {
   alert: ActiveAdhanAlert | null;
@@ -16,6 +17,8 @@ export const ActiveAdhanModal: React.FC<ActiveAdhanModalProps> = ({
   onStopAudio,
   isAudioPlaying,
 }) => {
+  const { language, locale, t } = useLanguage();
+
   if (!alert) return null;
 
   const prayerMeta = PRAYER_DISPLAY_NAMES[alert.prayerName] || {
@@ -23,6 +26,15 @@ export const ActiveAdhanModal: React.FC<ActiveAdhanModalProps> = ({
     ar: '',
     meaning: '',
   };
+  const prayerName = language === 'ar' ? prayerMeta.ar || alert.prayerDisplayName : prayerMeta.en;
+  const leadTimeText = t.adhan.leadTime.replace(
+    '{count}',
+    alert.leadMinutes.toLocaleString(locale),
+  );
+  const titleText = (alert.isLeadReminder ? t.adhan.prepare : t.adhan.now).replace(
+    '{prayer}',
+    prayerName,
+  );
 
   const closeAndStop = () => {
     onStopAudio();
@@ -40,14 +52,14 @@ export const ActiveAdhanModal: React.FC<ActiveAdhanModalProps> = ({
         <div className="relative flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-6">
           <div className="flex items-center gap-2 text-xs text-white/52">
             <Sparkles className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
-            <span>{alert.isLeadReminder ? `${alert.leadMinutes} minutes before prayer` : 'Prayer time'}</span>
+            <span>{alert.isLeadReminder ? leadTimeText : t.adhan.prayerTime}</span>
           </div>
           <button
             id="btn-close-active-adhan"
             type="button"
             onClick={closeAndStop}
             className="grid h-9 w-9 place-items-center rounded-lg text-white/48 transition-colors hover:bg-white/10 hover:text-white"
-            aria-label="Close adhan alert"
+            aria-label={t.adhan.close}
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -65,11 +77,11 @@ export const ActiveAdhanModal: React.FC<ActiveAdhanModalProps> = ({
           />
 
           <div className="relative">
-            <p className="font-serif text-3xl leading-none text-accent sm:text-4xl" dir="rtl">
-              {prayerMeta.ar}
+            <p className="font-serif text-3xl leading-none text-accent sm:text-4xl">
+              {prayerName}
             </p>
             <h2 id="adhan-alert-title" className="mt-3 text-3xl font-medium tracking-[-0.045em] sm:text-4xl">
-              {alert.isLeadReminder ? `Prepare for ${prayerMeta.en}` : `${prayerMeta.en} is now`}
+              {titleText}
             </h2>
             <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-white/46">
               <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
@@ -77,7 +89,7 @@ export const ActiveAdhanModal: React.FC<ActiveAdhanModalProps> = ({
             </div>
 
             {isAudioPlaying ? (
-              <div className="mx-auto mt-6 flex h-9 w-fit items-center justify-center gap-1.5 rounded-full border border-white/10 bg-white/[0.045] px-5" aria-label="Adhan is playing">
+              <div className="mx-auto mt-6 flex h-9 w-fit items-center justify-center gap-1.5 rounded-full border border-white/10 bg-white/[0.045] px-5" aria-label={t.adhan.playing}>
                 {[0.35, 0.72, 1, 0.5, 0.84, 0.4, 0.64, 0.28].map((height, index) => (
                   <span
                     key={index}
@@ -93,13 +105,13 @@ export const ActiveAdhanModal: React.FC<ActiveAdhanModalProps> = ({
                 اللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ
               </p>
               <p className="mt-3 text-xs leading-5 text-white/44">
-                “Allah is the Greatest. I bear witness that there is no deity worthy of worship except Allah.”
+                {t.adhan.translation}
               </p>
             </div>
 
             <details className="mx-auto mt-4 max-w-md text-start">
               <summary className="cursor-pointer list-none text-xs font-semibold text-white/58 transition-colors hover:text-white">
-                Dua after the adhan
+                {t.adhan.dua}
               </summary>
               <div className="mt-3 rounded-[0.7rem_0.7rem_0.22rem_0.22rem] border border-white/10 bg-white/[0.035] p-4">
                 <p className="font-serif text-sm leading-7 text-white/78" dir="rtl">
@@ -119,7 +131,7 @@ export const ActiveAdhanModal: React.FC<ActiveAdhanModalProps> = ({
               className="danger-button min-w-40"
             >
               <Square className="h-4 w-4 fill-current" aria-hidden="true" />
-              Stop adhan
+              {t.adhan.stop}
             </button>
           ) : null}
           <button
@@ -129,7 +141,7 @@ export const ActiveAdhanModal: React.FC<ActiveAdhanModalProps> = ({
             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[0.65rem] border border-white/14 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/15"
           >
             <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-            {isAudioPlaying ? 'Stop and close' : 'Close alert'}
+            {isAudioPlaying ? t.adhan.stopClose : t.adhan.closeAlert}
           </button>
         </div>
       </div>

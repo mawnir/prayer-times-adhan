@@ -10,12 +10,22 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <script>
-      // Apply the saved theme before first paint to avoid a flash of the wrong theme.
+      // Apply the saved theme and language before first paint.
       (function () {
         try {
           var t = localStorage.getItem('pt_theme');
           var dark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
           if (dark) document.documentElement.classList.add('dark');
+
+          var savedLanguage = localStorage.getItem('pt_language');
+          var language = savedLanguage === 'ar' || savedLanguage === 'en'
+            ? savedLanguage
+            : ((navigator.language || '').indexOf('ar') === 0 ? 'ar' : 'en');
+          document.documentElement.lang = language;
+          document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+          if (language === 'ar') {
+            document.title = 'أوقات الصلاة والأذان';
+          }
         } catch (e) {}
       })();
     </script>

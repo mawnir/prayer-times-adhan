@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { Clock, Compass, MapPin, Square } from 'lucide-react';
 import { CurrentPrayerStatus, LocationItem } from '../types';
-import { FIXED_UTC_OFFSET_MINUTES, PRAYER_DISPLAY_NAMES } from '../services/prayerService';
+import { FIXED_UTC_OFFSET_MINUTES, formatCountdown, PRAYER_DISPLAY_NAMES } from '../services/prayerService';
+import { formatLocationDisplay } from '../services/locationLocalization';
 import { useLanguage } from '../context/LanguageContext';
 
 interface HeroCurrentPrayerProps {
@@ -15,7 +16,7 @@ interface HeroCurrentPrayerProps {
   onOpenQiblaModal: () => void;
 }
 
-function formatLocalTime(date: Date, timezone: string | undefined, locale: 'en-GB' | 'ar-SA') {
+function formatLocalTime(date: Date, timezone: string | undefined, locale: string) {
   const fixedOffset = timezone ? FIXED_UTC_OFFSET_MINUTES[timezone] : undefined;
   const targetDate = fixedOffset !== undefined
     ? new Date(date.getTime() + fixedOffset * 60_000)
@@ -62,8 +63,9 @@ export const HeroCurrentPrayer: FC<HeroCurrentPrayerProps> = ({
   const localTime = formatLocalTime(
     currentTime,
     location.timezone,
-    language === 'ar' ? 'ar-SA' : 'en-GB'
+    language === 'ar' ? 'ar-SA-u-nu-latn' : 'en-GB'
   );
+  const countdown = formatCountdown(status.secondsRemaining, language);
   const progress = Math.max(0, Math.min(100, status.progressPercent));
   const progressDegrees = progress * 3.6;
   const orbitBackground = `repeating-conic-gradient(from -90deg, rgba(236,244,239,.28) 0deg .55deg, transparent .55deg 7.5deg), conic-gradient(from -90deg, #c8a35b 0deg ${progressDegrees}deg, rgba(236,244,239,.11) ${progressDegrees}deg 360deg)`;
@@ -79,7 +81,7 @@ export const HeroCurrentPrayer: FC<HeroCurrentPrayerProps> = ({
           title={t.clickToChangeCity}
         >
           <MapPin className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
-          <span className="truncate">{location.name}, {location.country}</span>
+          <span className="truncate">{formatLocationDisplay(location, language)}</span>
         </button>
 
         <div className="flex shrink-0 items-center gap-2">
@@ -143,17 +145,17 @@ export const HeroCurrentPrayer: FC<HeroCurrentPrayerProps> = ({
         <div
           className="countdown-orbit lg:me-3"
           style={{ background: orbitBackground }}
-          aria-label={`${t.timeRemaining}: ${status.timeRemainingFormatted}`}
+          aria-label={`${t.timeRemaining}: ${countdown}`}
         >
           <div className="orbit-core">
             <span className="text-[0.68rem] font-medium text-white/48">{t.timeRemaining}</span>
             <time
               className="countdown-value my-3 text-white"
               dateTime={status.nextPrayerTime.toISOString()}
-              dir="ltr"
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
               aria-live="off"
             >
-              {status.timeRemainingFormatted}
+              {countdown}
             </time>
             <span className="flex items-center gap-1.5 text-[0.67rem] text-white/45">
               <Clock className="h-3 w-3 text-accent" aria-hidden="true" />

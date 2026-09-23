@@ -12,6 +12,12 @@ export interface LocationItem {
   admin1?: string; // state / province / governorate
   countryCode?: string;
   isDefault?: boolean;
+  // Arabic display names. When present they take precedence over the
+  // lookup dictionaries for Arabic UI. Canonical `name`/`country` stay
+  // in English so saved locations and search dedup keep working.
+  nameAr?: string;
+  countryAr?: string;
+  admin1Ar?: string;
 }
 
 export type AdhanSoundType = 
@@ -67,6 +73,11 @@ export interface DayPrayerSchedule {
   dayName: string;
   dayNumber: string;
   monthName: string;
+  // Arabic (Gregorian) equivalents, populated alongside the English ones
+  // so Arabic UI can render Muslim/Gregorian dates without re-computing.
+  dayNameAr: string;
+  dayNumberAr: string;
+  monthNameAr: string;
   isToday: boolean;
   hijriDate: {
     day: number;

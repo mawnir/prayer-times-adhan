@@ -12,6 +12,7 @@ import {
   Moon,
 } from 'lucide-react';
 import { LocationItem, NotificationSettings } from '../types';
+import { getCityDisplayName, formatLocationDisplay } from '../services/locationLocalization';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -52,12 +53,12 @@ export const Header: React.FC<HeaderProps> = ({
           if (location) onSelectLocation(location);
         }}
         className="location-select w-full min-w-0"
-        title={`${activeLocation.name}, ${activeLocation.country}`}
-        aria-label="Choose prayer location"
+        title={formatLocationDisplay(activeLocation, language)}
+        aria-label={t.choosePrayerLocation}
       >
         {locations.map((location) => (
           <option key={location.id} value={location.id}>
-            {location.name}
+            {getCityDisplayName(location, language)}
           </option>
         ))}
       </select>
@@ -83,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
   const languageSwitch = (
     <div
       role="group"
-      aria-label="Language"
+      aria-label={t.language}
       className="inline-flex shrink-0 items-center rounded-[0.65rem] border border-muted-border bg-muted p-0.5 text-[0.68rem]"
     >
       <button

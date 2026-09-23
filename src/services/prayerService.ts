@@ -18,13 +18,16 @@ import {
   PrayerKey,
 } from '../types';
 
-export const PRAYER_DISPLAY_NAMES: Record<PrayerKey, { en: string; ar: string; meaning: string }> = {
-  fajr: { en: 'Fajr', ar: 'الفجر', meaning: 'Dawn Prayer' },
-  sunrise: { en: 'Sunrise', ar: 'الشروق', meaning: 'Shuruq' },
-  dhuhr: { en: 'Dhuhr', ar: 'الظهر', meaning: 'Noon Prayer' },
-  asr: { en: 'Asr', ar: 'العصر', meaning: 'Afternoon Prayer' },
-  maghrib: { en: 'Maghrib', ar: 'المغرب', meaning: 'Sunset Prayer' },
-  isha: { en: 'Isha', ar: 'العشاء', meaning: 'Night Prayer' },
+const ARABIC_LOCALE = 'ar-SA-u-nu-latn';
+const ARABIC_NUMBER_FORMATTER = new Intl.NumberFormat(ARABIC_LOCALE, { useGrouping: false });
+
+export const PRAYER_DISPLAY_NAMES: Record<PrayerKey, { en: string; ar: string; meaning: string; meaningAr: string }> = {
+  fajr: { en: 'Fajr', ar: 'الفجر', meaning: 'Dawn Prayer', meaningAr: 'صلاة الفجر' },
+  sunrise: { en: 'Sunrise', ar: 'الشروق', meaning: 'Shuruq', meaningAr: 'وقت الشروق' },
+  dhuhr: { en: 'Dhuhr', ar: 'الظهر', meaning: 'Noon Prayer', meaningAr: 'صلاة الظهر' },
+  asr: { en: 'Asr', ar: 'العصر', meaning: 'Afternoon Prayer', meaningAr: 'صلاة العصر' },
+  maghrib: { en: 'Maghrib', ar: 'المغرب', meaning: 'Sunset Prayer', meaningAr: 'صلاة المغرب' },
+  isha: { en: 'Isha', ar: 'العشاء', meaning: 'Night Prayer', meaningAr: 'صلاة العشاء' },
 };
 
 export const FARDH_PRAYERS: FardhPrayerKey[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
@@ -90,7 +93,7 @@ export function getCalculationParameters(settings: CalculationSettings): Calcula
 }
 
 // Convert Gregorian to Hijri accurately
-export function getHijriDate(date: Date): {
+export function getHijriDate(date: Date, timezone?: string): {
   day: number;
   monthName: string;
   monthNameAr: string;
@@ -109,7 +112,7 @@ export function getHijriDate(date: Date): {
     'جمادى الأولى', 'جمادى الثانية', 'رجب', 'شعبان',
     'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'
   ];
-  const toArDigits = (n: number) => new Intl.NumberFormat('ar-EG').format(n);
+  const toArDigits = (n: number) => ARABIC_NUMBER_FORMATTER.format(n);
 
   const buildResult = (day: number, monthIndex: number, year: number) => {
     const monthName = hijriMonths[monthIndex] || 'Islamic Month';
@@ -131,6 +134,7 @@ export function getHijriDate(date: Date): {
       day: 'numeric',
       month: 'numeric',
       year: 'numeric',
+      ...(timezone ? { timeZone: timezone } : {}),
     });
     const parts = formatter.formatToParts(date);
     const day = parseInt(parts.find(p => p.type === 'day')?.value || '1', 10);
@@ -150,6 +154,34 @@ export function getHijriDate(date: Date): {
     const d = l3 - Math.floor((709 * m) / 24);
     const y = 30 * n + j - 30;
     return buildResult(d, Math.max(0, Math.min(11, m - 1)), y);
+  }
+}
+
+function getZonedDateParts(date: Date, timezone?: string): { year: number; month: number; day: number } {
+  const fixedOffset = timezone ? FIXED_UTC_OFFSET_MINUTES[timezone] : undefined;
+  if (fixedOffset !== undefined) {
+    const shifted = new Date(date.getTime() + fixedOffset * 60_000);
+    return { year: shifted.getUTCFullYear(), month: shifted.getUTCMonth() + 1, day: shifted.getUTCDate() };
+  }
+  if (!timezone) {
+    return { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() };
+  }
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone, year: 'numeric', month: 'numeric', day: 'numeric',
+    }).formatToParts(date);
+    const read = (type: Intl.DateTimeFormatPartTypes) => Number(parts.find((part) => part.type === type)?.value);
+    return { year: read('year'), month: read('month'), day: read('day') };
+  } catch {
+    return { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() };
+  }
+}
+
+function formatDate(date: Date, locale: string, options: Intl.DateTimeFormatOptions, timezone?: string): string {
+  try {
+    return new Intl.DateTimeFormat(locale, { ...options, ...(timezone ? { timeZone: timezone } : {}) }).format(date);
+  } catch {
+    return new Intl.DateTimeFormat(locale, options).format(date);
   }
 }
 
@@ -179,15 +211,23 @@ export function calculateDayPrayerSchedule(
     isha: applyOffset(pt.isha, settings.manualOffsets.isha),
   };
 
-  const isToday = new Date().toDateString() === date.toDateString();
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const dateParts = getZonedDateParts(date, location.timezone);
+  const currentParts = getZonedDateParts(new Date(), location.timezone);
+  const year = dateParts.year;
+  const month = String(dateParts.month).padStart(2, '0');
+  const day = String(dateParts.day).padStart(2, '0');
   const dateKey = `${year}-${month}-${day}`;
+  const isToday = currentParts.year === year && currentParts.month === dateParts.month && currentParts.day === dateParts.day;
 
-  const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-  const dayNumber = date.toLocaleDateString('en-US', { day: 'numeric' });
-  const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+  const dayName = formatDate(date, 'en-US', { weekday: 'short' }, location.timezone);
+  const dayNumber = formatDate(date, 'en-US', { day: 'numeric' }, location.timezone);
+  const monthName = formatDate(date, 'en-US', { month: 'short' }, location.timezone);
+  // Pin both the Gregorian calendar and Latin digits so these are Arabic
+  // Gregorian fields without Arabic-Indic numerals (Hijri lives in `hijriDate`).
+  const arabicGregorianLocale = `${ARABIC_LOCALE}-ca-gregory`;
+  const dayNameAr = formatDate(date, arabicGregorianLocale, { weekday: 'short' }, location.timezone);
+  const dayNumberAr = formatDate(date, arabicGregorianLocale, { day: 'numeric' }, location.timezone);
+  const monthNameAr = formatDate(date, arabicGregorianLocale, { month: 'short' }, location.timezone);
 
   return {
     date,
@@ -195,8 +235,11 @@ export function calculateDayPrayerSchedule(
     dayName,
     dayNumber,
     monthName,
+    dayNameAr,
+    dayNumberAr,
+    monthNameAr,
     isToday,
-    hijriDate: getHijriDate(date),
+    hijriDate: getHijriDate(date, location.timezone),
     prayers,
     qiyam: sunnah.lastThirdOfTheNight,
     midnight: sunnah.middleOfTheNight,
@@ -210,8 +253,8 @@ export function calculateWeekSchedule(
   startDate: Date = new Date()
 ): DayPrayerSchedule[] {
   const schedule: DayPrayerSchedule[] = [];
-  const baseDate = new Date(startDate);
-  baseDate.setHours(0, 0, 0, 0);
+  const today = getZonedDateParts(startDate, location.timezone);
+  const baseDate = new Date(today.year, today.month - 1, today.day, 12, 0, 0, 0);
 
   for (let i = 0; i < 8; i++) {
     const targetDate = new Date(baseDate);
@@ -234,7 +277,8 @@ export const FIXED_UTC_OFFSET_MINUTES: Record<string, number> = {
 export function formatPrayerTime(
   date: Date | undefined,
   timeFormat: '12h' | '24h',
-  timezone?: string
+  timezone?: string,
+  locale: string = 'en-US'
 ): string {
   if (!date || isNaN(date.getTime())) return '--:--';
 
@@ -249,7 +293,7 @@ export function formatPrayerTime(
     // Render the wall clock for that fixed offset deterministically, without
     // relying on the browser's (possibly stale) timezone database.
     const shifted = new Date(date.getTime() + fixedOffset * 60000);
-    return new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'UTC' }).format(shifted);
+    return new Intl.DateTimeFormat(locale, { ...options, timeZone: 'UTC' }).format(shifted);
   }
 
   if (timezone) {
@@ -260,7 +304,28 @@ export function formatPrayerTime(
     }
   }
 
-  return new Intl.DateTimeFormat('en-US', options).format(date);
+  return new Intl.DateTimeFormat(locale, options).format(date);
+}
+
+const countdownFormatters = {
+  en: new Intl.NumberFormat('en-US', { minimumIntegerDigits: 2, useGrouping: false }),
+  ar: new Intl.NumberFormat(ARABIC_LOCALE, { minimumIntegerDigits: 2, useGrouping: false }),
+};
+
+export function formatCountdown(totalSeconds: number, language: 'en' | 'ar'): string {
+  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+  const hours = Math.floor(safeSeconds / 3600);
+  const minutes = Math.floor((safeSeconds % 3600) / 60);
+  const seconds = safeSeconds % 60;
+  const number = (value: number) => countdownFormatters[language].format(value);
+  const units = language === 'ar' ? { h: 'س', m: 'د', s: 'ث' } : { h: 'h', m: 'm', s: 's' };
+  const parts = hours > 0
+    ? [`${number(hours)} ${units.h}`, `${number(minutes)} ${units.m}`, `${number(seconds)} ${units.s}`]
+    : minutes > 0
+      ? [`${number(minutes)} ${units.m}`, `${number(seconds)} ${units.s}`]
+      : [`${number(seconds)} ${units.s}`];
+
+  return parts.join(' ');
 }
 
 export function getCurrentPrayerStatus(

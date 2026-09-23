@@ -1,6 +1,7 @@
 import { ActiveAdhanAlert, FardhPrayerKey, LocationItem, NotificationSettings, PrayerKey } from '../types';
 import { audioService } from './audioService';
 import { PRAYER_DISPLAY_NAMES } from './prayerService';
+import { formatLocationDisplay, getActiveAppLanguage } from './locationLocalization';
 
 export class NotificationService {
   private static lastTriggeredKeys: Set<string> = new Set();
@@ -39,11 +40,20 @@ export class NotificationService {
     const prayerName = prayerInfo ? prayerInfo.en : prayer;
     const arabicName = prayerInfo ? prayerInfo.ar : '';
 
-    const title = isLeadReminder
-      ? `Upcoming: ${prayerName} Prayer in ${leadMinutes} minutes`
-      : `Adhan: Time for ${prayerName} (${arabicName})`;
+    const lang = getActiveAppLanguage();
+    const localizedLocation = formatLocationDisplay(location, lang);
 
-    const body = `${location.name}, ${location.country} — ${isLeadReminder ? `Prepare for ${prayerName}` : `It is now time for ${prayerName} prayer.`}`;
+    const title = lang === 'ar'
+      ? (isLeadReminder
+        ? `تذكير: صلاة ${arabicName || prayerName} بعد ${leadMinutes} دقائق`
+        : `الأذان: حان وقت صلاة ${arabicName || prayerName}`)
+      : (isLeadReminder
+        ? `Upcoming: ${prayerName} Prayer in ${leadMinutes} minutes`
+        : `Adhan: Time for ${prayerName} (${arabicName})`);
+
+    const body = lang === 'ar'
+      ? `${localizedLocation} — ${isLeadReminder ? `استعد لصلاة ${arabicName || prayerName}` : `حان الآن وقت صلاة ${arabicName || prayerName}.`}`
+      : `${localizedLocation} — ${isLeadReminder ? `Prepare for ${prayerName}` : `It is now time for ${prayerName} prayer.`}`;
 
     // 1. Browser Push Notification
     if (settings.showBrowserNotification && 'Notification' in window && Notification.permission === 'granted') {
@@ -68,7 +78,7 @@ export class NotificationService {
       onShowActiveAdhan({
         prayerName: prayer,
         prayerDisplayName: prayerName,
-        locationName: `${location.name}, ${location.country}`,
+        locationName: localizedLocation,
         time: new Date(),
         isLeadReminder,
         leadMinutes,

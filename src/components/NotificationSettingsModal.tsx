@@ -12,6 +12,47 @@ import {
 import { AdhanSoundType, FardhPrayerKey, NotificationSettings } from '../types';
 import { PRAYER_DISPLAY_NAMES } from '../services/prayerService';
 import { NotificationService } from '../services/notificationService';
+import { useLanguage } from '../context/LanguageContext';
+
+type LocalizedText = { en: string; ar: string };
+
+const SOUND_LABELS: Record<AdhanSoundType, { label: LocalizedText; description: LocalizedText }> = {
+  makkah_adhan: {
+    label: { en: 'Makkah Adhan', ar: 'أذان مكة' },
+    description: { en: 'Resonant Maqam Bayati vocal chant', ar: 'ترتيل صوتي رنّان على مقام بيتي' },
+  },
+  madinah_adhan: {
+    label: { en: 'Madinah Call', ar: 'نداء المدينة' },
+    description: { en: 'Serene Rast melody with warm formants', ar: 'لحن راست هادئ بنغمات دافئة' },
+  },
+  takbeer: {
+    label: { en: 'Takbeer Chant', ar: 'نغمة التكبير' },
+    description: { en: 'Allahu Akbar melodic anthem', ar: 'لحن «الله أكبر»' },
+  },
+  spiritual_chime: {
+    label: { en: 'Spiritual Chime', ar: 'رنّة روحانية' },
+    description: { en: 'Acoustic singing bowl decay', ar: 'رنين وعاء غنائي أكوستيكي' },
+  },
+  gentle_beep: {
+    label: { en: 'Gentle Beep', ar: 'تنبيه لطيف' },
+    description: { en: 'Soft 3-tone harmonic alert', ar: 'تنبيه هادئ من ثلاث نغمات' },
+  },
+  silent: {
+    label: { en: 'Silent Alert', ar: 'تنبيه صامت' },
+    description: { en: 'Visual banner / browser alert only', ar: 'شريط مرئي أو تنبيه المتصفح فقط' },
+  },
+};
+
+const FAJR_DESCRIPTION: LocalizedText = {
+  en: 'Dawn Call (includes As-Salatu Khayr)',
+  ar: 'نداء الفجر (يتضمن «الصلاة خير»)',
+};
+
+const interpolate = (template: string, values: Record<string, string | number>) =>
+  Object.entries(values).reduce(
+    (result, [key, value]) => result.replace(`{${key}}`, String(value)),
+    template
+  );
 
 interface NotificationSettingsModalProps {
   isOpen: boolean;
@@ -34,6 +75,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
   onStopAudio,
   onTestNotification,
 }) => {
+  const { language, t } = useLanguage();
   const [permissionStatus, setPermissionStatus] = useState<NotificationPermission>(
     NotificationService.getPermissionStatus()
   );
@@ -103,14 +145,13 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
 
   const prayersList: FardhPrayerKey[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
 
-  const soundOptions: { value: AdhanSoundType; label: string; desc: string }[] = [
-    { value: 'makkah_adhan', label: 'Makkah Adhan', desc: 'Resonant Maqam Bayati vocal chant' },
-    { value: 'madinah_adhan', label: 'Madinah Call', desc: 'Serene Rast melody with warm formants' },
-    { value: 'takbeer', label: 'Takbeer Chant', desc: 'Allahu Akbar melodic anthem' },
-    { value: 'spiritual_chime', label: 'Spiritual Chime', desc: 'Acoustic singing bowl decay' },
-    { value: 'gentle_beep', label: 'Gentle Beep', desc: 'Soft 3-tone harmonic alert' },
-    { value: 'silent', label: 'Silent Alert', desc: 'Visual banner / browser alert only' },
-  ];
+  const soundOptions: { value: AdhanSoundType; label: string; description: string }[] =
+    (Object.entries(SOUND_LABELS) as [AdhanSoundType, (typeof SOUND_LABELS)[AdhanSoundType]][])
+      .map(([value, text]) => ({
+        value,
+        label: text.label[language],
+        description: text.description[language],
+      }));
 
   return (
     <div className="modal-backdrop">
@@ -122,14 +163,14 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             </div>
             <div className="min-w-0">
               <h2 id="notification-settings-title" className="text-lg font-semibold tracking-[-0.025em] text-foreground">
-                Adhan &amp; notification settings
+                {t.notifications.title}
               </h2>
               <p className="mt-0.5 text-xs leading-5 text-foreground/50">
-                Choose a sound and reminder time for each prayer.
+                {t.notifications.subtitle}
               </p>
             </div>
           </div>
-          <button id="btn-close-notif-modal" type="button" onClick={onClose} className="icon-button" aria-label="Close settings">
+          <button id="btn-close-notif-modal" type="button" onClick={onClose} className="icon-button" aria-label={t.notifications.close}>
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
@@ -141,10 +182,10 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h3 className="font-semibold text-sm text-foreground">
-                  Master adhan notifications
+                  {t.notifications.master}
                 </h3>
                 <p className="text-xs text-foreground/50">
-                  Enable or pause all prayer alarms and notifications
+                  {t.notifications.masterDescription}
                 </p>
               </div>
               <button
@@ -152,7 +193,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                 type="button"
                 role="switch"
                 aria-checked={settings.masterEnabled}
-                aria-label="Master adhan notifications"
+                aria-label={t.notifications.master}
                 onClick={handleToggleMaster}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${settings.masterEnabled ? 'bg-primary' : 'bg-foreground/20'}`}
               >
@@ -168,7 +209,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
               <div className="flex items-center justify-between text-xs font-semibold text-foreground">
                 <span className="flex items-center gap-1.5">
                   <Volume2 className="h-4 w-4 text-primary" aria-hidden="true" />
-                  Adhan audio volume
+                  {t.notifications.volume}
                 </span>
                 <span className="font-mono">{Math.round(settings.volume * 100)}%</span>
               </div>
@@ -179,6 +220,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                 max="1"
                 step="0.05"
                 value={settings.volume}
+                aria-label={t.notifications.volume}
                 onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
                 className="h-2 w-full cursor-pointer accent-primary rounded-lg bg-foreground/10"
               />
@@ -187,16 +229,16 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
 
           {/* Browser Notification Permission Banner */}
           <div className="flex flex-col justify-between gap-3 rounded-[0.7rem_0.7rem_0.25rem_0.25rem] border border-muted-border p-4 sm:flex-row sm:items-center">
-            <div className="flex items-start space-x-3">
+            <div className="flex items-start gap-3">
               <div className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-muted-border bg-surface text-primary">
                 <ShieldCheck className="h-4 w-4" aria-hidden="true" />
               </div>
               <div>
                 <h3 className="font-semibold text-sm text-foreground">
-                  Browser notifications
+                  {t.notifications.browser}
                 </h3>
                 <p className="text-xs text-foreground/50">
-                  Status:{' '}
+                  {t.notifications.status}{' '}
                   <span className={`font-semibold ${permissionStatus === 'granted'
                     ? 'text-primary'
                     : permissionStatus === 'denied'
@@ -204,10 +246,10 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                       : 'text-foreground/50'
                     }`}>
                     {permissionStatus === 'granted'
-                      ? 'Enabled (Permissions Granted)'
+                      ? t.notifications.granted
                       : permissionStatus === 'denied'
-                        ? 'Blocked by Browser'
-                        : 'Permission Required'}
+                        ? t.notifications.denied
+                        : t.notifications.required}
                   </span>
                 </p>
               </div>
@@ -216,10 +258,11 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             {permissionStatus !== 'granted' && (
               <button
                 id="btn-request-browser-notif"
+                type="button"
                 onClick={handleRequestPermission}
                 className="primary-button shrink-0"
               >
-                Enable in browser
+                {t.notifications.enable}
               </button>
             )}
           </div>
@@ -227,13 +270,22 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
           {/* Per-Prayer Sound & Timing Customization */}
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-3 px-1">
-              <h3 className="text-sm font-semibold text-foreground">Per-prayer sounds &amp; lead times</h3>
-              <span className="text-xs text-foreground/45">A custom sound for all five prayers</span>
+              <h3 className="text-sm font-semibold text-foreground">{t.notifications.perPrayer}</h3>
+              <span className="text-xs text-foreground/45">{t.notifications.perPrayerHint}</span>
             </div>
 
             <div className="space-y-2">
               {prayersList.map((prayer) => {
                 const meta = PRAYER_DISPLAY_NAMES[prayer];
+                const prayerName = meta[language];
+                const prayerDescription = prayer === 'fajr'
+                  ? FAJR_DESCRIPTION[language]
+                  : language === 'ar'
+                    ? meta.meaningAr
+                    : meta.meaning;
+                const prayerNotificationLabel = language === 'ar'
+                  ? `تنبيهات ${prayerName}`
+                  : `${prayerName} notifications`;
                 const config = settings.perPrayer[prayer];
                 const isPlayingThis = playingSound === config.sound;
                 const isActive = config.enabled && settings.masterEnabled;
@@ -250,14 +302,14 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 
                       {/* Prayer Title & Toggle */}
-                      <div className="flex items-center space-x-3 min-w-0 flex-1">
+                      <div className="flex min-w-0 flex-1 items-center gap-3">
                         <div
                           className={`grid h-9 w-9 shrink-0 place-items-center rounded-[0.65rem_0.65rem_0.2rem_0.2rem] text-sm font-bold ${isActive
                             ? 'bg-primary text-white'
                             : 'bg-muted text-foreground/45'
                             }`}
                         >
-                          <Bell className="w-4 h-4" />
+                          <Bell className="w-4 h-4" aria-hidden="true" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -265,18 +317,16 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                               type="checkbox"
                               id={`checkbox-notif-${prayer}`}
                               checked={config.enabled}
+                              aria-label={prayerNotificationLabel}
                               onChange={() => handleTogglePrayer(prayer)}
                               className="w-4 h-4 rounded-sm cursor-pointer accent-primary/80"
                             />
                             <span className="text-sm font-semibold text-foreground">
-                              {meta.en}
-                            </span>
-                            <span className="font-serif text-xs text-primary/65" dir="rtl">
-                              {meta.ar}
+                              {prayerName}
                             </span>
                           </div>
                           <p className="mt-0.5 text-[0.68rem] text-foreground/44">
-                            {prayer === 'fajr' ? 'Dawn Call (includes As-Salatu Khayr)' : meta.meaning}
+                            {prayerDescription}
                           </p>
                         </div>
                       </div>
@@ -291,11 +341,11 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                             value={config.sound}
                             onChange={(e) => handlePrayerSoundChange(prayer, e.target.value as AdhanSoundType)}
                             disabled={!config.enabled || !settings.masterEnabled}
-                            aria-label={`${meta.en} notification sound`}
+                            aria-label={interpolate(t.notifications.prayerSound, { prayer: prayerName })}
                             className="form-control min-w-32 py-2 pe-7 ps-2.5 text-xs font-medium disabled:opacity-50"
                           >
                             {soundOptions.map((opt) => (
-                              <option key={opt.value} value={opt.value}>
+                              <option key={opt.value} value={opt.value} title={opt.description}>
                                 {opt.label}
                               </option>
                             ))}
@@ -304,6 +354,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                           {/* Preview Button */}
                           <button
                             id={`btn-preview-sound-${prayer}`}
+                            type="button"
                             onClick={() => {
                               if (isPlayingThis) {
                                 onStopAudio();
@@ -315,12 +366,13 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                               ? 'border-danger/35 bg-danger/10 text-danger'
                               : 'border-muted-border bg-muted text-foreground/55 hover:bg-primary/10 hover:text-primary'
                               }`}
-                            title={isPlayingThis ? 'Stop Audio' : 'Preview this sound'}
+                            title={isPlayingThis ? t.notifications.stopAudio : t.notifications.preview}
+                            aria-label={isPlayingThis ? t.notifications.stopAudio : t.notifications.preview}
                           >
                             {isPlayingThis ? (
-                              <Square className="w-3.5 h-3.5 fill-current" />
+                              <Square className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
                             ) : (
-                              <Play className="w-3.5 h-3.5 fill-current" />
+                              <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
                             )}
                           </button>
                         </div>
@@ -333,14 +385,15 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                             value={config.leadTimeMinutes}
                             onChange={(e) => handlePrayerLeadTimeChange(prayer, parseInt(e.target.value, 10))}
                             disabled={!config.enabled || !settings.masterEnabled}
-                            aria-label={`${meta.en} reminder lead time`}
+                            aria-label={interpolate(t.notifications.prayerLead, { prayer: prayerName })}
                             className="form-control min-w-32 py-2 pe-7 ps-2.5 text-xs font-medium disabled:opacity-50"
                           >
-                            <option value="0">At Prayer Time</option>
-                            <option value="5">5 min before</option>
-                            <option value="10">10 min before</option>
-                            <option value="15">15 min before</option>
-                            <option value="30">30 min before</option>
+                            <option value="0">{t.notifications.atTime}</option>
+                            {[5, 10, 15, 30].map((count) => (
+                              <option key={count} value={count}>
+                                {interpolate(t.notifications.minutesBefore, { count })}
+                              </option>
+                            ))}
                           </select>
                         </div>
 
@@ -364,11 +417,11 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             className="secondary-button"
           >
             <Sparkles className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
-            Test adhan
+            {t.notifications.test}
           </button>
 
           <button type="button" onClick={onClose} className="primary-button">
-            Save &amp; close
+            {t.notifications.saveClose}
           </button>
         </div>
 

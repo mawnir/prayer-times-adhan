@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Compass, MapPin } from 'lucide-react';
 import { LocationItem } from '../types';
 import { getQiblaInfo } from '../services/prayerService';
+import { formatLocationDisplay } from '../services/locationLocalization';
 import { useLanguage } from '../context/LanguageContext';
 
 interface QiblaModalProps {
@@ -23,11 +24,16 @@ function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
 }
 
 export const QiblaModal: React.FC<QiblaModalProps> = ({ isOpen, onClose, location }) => {
-  const { t } = useLanguage();
+  const { language, locale, t } = useLanguage();
   if (!isOpen) return null;
 
   const { angle, cardinal } = getQiblaInfo(location);
   const distanceKm = getDistanceKm(location.latitude, location.longitude, 21.4225, 39.8262);
+  const localizedLocation = formatLocationDisplay(location, language);
+  const localizedCardinal = t.qibla.directions[cardinal as keyof typeof t.qibla.directions] || cardinal;
+  const localizedAngle = angle.toLocaleString(locale);
+  const localizedDistance = distanceKm.toLocaleString(locale);
+  const directionDisplay = `${localizedAngle}° ${localizedCardinal}`;
 
   return (
     <div className="modal-backdrop">
@@ -41,10 +47,10 @@ export const QiblaModal: React.FC<QiblaModalProps> = ({ isOpen, onClose, locatio
               <h2 id="qibla-title" className="text-lg font-semibold tracking-[-0.025em] text-foreground">
                 {t.qiblaDirection}
               </h2>
-              <p className="mt-0.5 text-xs text-foreground/50">From {location.name}, {location.country}</p>
+              <p className="mt-0.5 text-xs text-foreground/50">{t.qibla.from.replace('{location}', localizedLocation)}</p>
             </div>
           </div>
-          <button id="btn-close-qibla-modal" type="button" onClick={onClose} className="icon-button" aria-label="Close compass">
+          <button id="btn-close-qibla-modal" type="button" onClick={onClose} className="icon-button" aria-label={t.qibla.close}>
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
@@ -54,10 +60,10 @@ export const QiblaModal: React.FC<QiblaModalProps> = ({ isOpen, onClose, locatio
             <div className="absolute inset-5 rounded-full border border-dashed border-white/16" aria-hidden="true" />
             <div className="absolute inset-10 rounded-full border border-white/8" aria-hidden="true" />
 
-            <span className="absolute top-4 text-[0.65rem] font-semibold text-accent">N</span>
-            <span className="absolute end-4 text-[0.65rem] font-semibold text-white/45">E</span>
-            <span className="absolute bottom-4 text-[0.65rem] font-semibold text-white/45">S</span>
-            <span className="absolute start-4 text-[0.65rem] font-semibold text-white/45">W</span>
+            <span className="absolute top-4 text-[0.65rem] font-semibold text-accent">{t.qibla.directions.N}</span>
+            <span className="absolute end-4 text-[0.65rem] font-semibold text-white/45">{t.qibla.directions.E}</span>
+            <span className="absolute bottom-4 text-[0.65rem] font-semibold text-white/45">{t.qibla.directions.S}</span>
+            <span className="absolute start-4 text-[0.65rem] font-semibold text-white/45">{t.qibla.directions.W}</span>
 
             <div
               className="absolute inset-5 transition-transform duration-700 ease-out motion-reduce:transition-none"
@@ -80,15 +86,15 @@ export const QiblaModal: React.FC<QiblaModalProps> = ({ isOpen, onClose, locatio
 
           <div className="mt-5 grid grid-cols-2 divide-x divide-muted-border border-y border-muted-border py-4 text-center">
             <div className="px-3">
-              <span className="block text-[0.68rem] text-foreground/45">Qibla angle</span>
-              <strong className="mt-1 block font-mono text-xl font-semibold tracking-[-0.04em] text-foreground" dir="ltr">
-                {angle}° {cardinal}
+              <span className="block text-[0.68rem] text-foreground/45">{t.qibla.angle}</span>
+              <strong className="mt-1 block font-mono text-xl font-semibold tracking-[-0.04em] text-foreground" dir="auto">
+                {directionDisplay}
               </strong>
             </div>
             <div className="px-3">
-              <span className="block text-[0.68rem] text-foreground/45">Distance to Makkah</span>
-              <strong className="mt-1 block font-mono text-xl font-semibold tracking-[-0.04em] text-foreground" dir="ltr">
-                {distanceKm.toLocaleString()} km
+              <span className="block text-[0.68rem] text-foreground/45">{t.qibla.distance}</span>
+              <strong className="mt-1 block font-mono text-xl font-semibold tracking-[-0.04em] text-foreground" dir="auto">
+                {localizedDistance} {t.qibla.km}
               </strong>
             </div>
           </div>
@@ -96,14 +102,14 @@ export const QiblaModal: React.FC<QiblaModalProps> = ({ isOpen, onClose, locatio
           <div className="mt-4 flex items-start gap-2.5 text-xs leading-5 text-foreground/52">
             <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <p>
-              Turn <strong className="font-semibold text-foreground/75">{angle}° {cardinal}</strong> from true north toward the Kaaba.
+              {t.qibla.instruction.replace('{direction}', directionDisplay)}
             </p>
           </div>
         </div>
 
         <div className="modal-footer">
           <button id="btn-close-qibla-footer" type="button" onClick={onClose} className="primary-button w-full">
-            Close compass
+            {t.qibla.closeCompass}
           </button>
         </div>
       </div>

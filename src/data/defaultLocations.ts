@@ -1477,11 +1477,17 @@ export const POPULAR_CITIES: LocationItem[] = [
   },
 ];
 
+const requiredCity = (id: string): LocationItem => {
+  const city = POPULAR_CITIES.find((item) => item.id === id);
+  if (!city) throw new Error(`Missing default location: ${id}`);
+  return city;
+};
+
 export const INITIAL_USER_LOCATIONS: LocationItem[] = [
-  POPULAR_CITIES[0], // Makkah
-  POPULAR_CITIES[1], // Madinah
-  POPULAR_CITIES[35], // London
-  POPULAR_CITIES[19], // New York
-  POPULAR_CITIES[45], // Istanbul
-  POPULAR_CITIES[5],  // Dubai
-];
+  'makkah',
+  'madinah',
+  'london',
+  'new-york',
+  'istanbul',
+  'dubai',
+].map(requiredCity);

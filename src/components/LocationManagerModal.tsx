@@ -10,15 +10,20 @@ import {
   Globe,
   Loader2,
   Building2,
-  Compass,
   Layers,
-  Sparkles,
-  ChevronRight
 } from 'lucide-react';
 import { CalculationSettings, LocationItem } from '../types';
 import { POPULAR_CITIES, WORLD_REGIONS } from '../data/defaultLocations';
+import { REGION_AR } from '../data/arabicNames';
 import { searchAllCities, SearchResultItem } from '../services/citySearchService';
-import { calculateDayPrayerSchedule, formatPrayerTime } from '../services/prayerService';
+import { calculateDayPrayerSchedule, formatPrayerTime, PRAYER_DISPLAY_NAMES } from '../services/prayerService';
+import {
+  formatLocationDisplay,
+  getAdminDisplayName,
+  getCityDisplayName,
+  getCountryDisplayName,
+} from '../services/locationLocalization';
+import { useLanguage } from '../context/LanguageContext';
 
 interface LocationManagerModalProps {
   isOpen: boolean;
@@ -41,6 +46,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
   onRemoveLocation,
   calculationSettings,
 }) => {
+  const { language, locale, t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'search' | 'saved' | 'compare' | 'custom'>('search');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('All');
@@ -48,11 +54,11 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
     POPULAR_CITIES.map((c) => ({ ...c, isGlobalResult: false }))
   );
   const [isSearching, setIsSearching] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   // GPS State
   const [isDetectingGps, setIsDetectingGps] = useState(false);
-  const [gpsError, setGpsError] = useState<string | null>(null);
+  const [gpsError, setGpsError] = useState<'unsupported' | 'failed' | null>(null);
 
   // Custom location form fields
   const [customName, setCustomName] = useState('');
@@ -79,7 +85,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
 
     setIsSearching(true);
     const handler = setTimeout(() => {
-      searchAllCities(trimmed)
+      searchAllCities(trimmed, language)
         .then((results) => {
           startTransition(() => {
             setSearchResults(results);
@@ -92,7 +98,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
     }, 280);
 
     return () => clearTimeout(handler);
-  }, [searchQuery, selectedRegion, isOpen]);
+  }, [searchQuery, selectedRegion, isOpen, language]);
 
   if (!isOpen) return null;
 
@@ -133,6 +139,12 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
         return true;
       });
 
+  const gpsErrorMessage = gpsError === 'unsupported'
+    ? t.locations.gpsUnsupported
+    : gpsError === 'failed'
+      ? t.locations.gpsError
+      : null;
+
   const handleSelectOrAddCity = (city: LocationItem) => {
     onAddLocation(city);
     onSelectLocation(city);
@@ -141,7 +153,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
 
   const handleUseGps = () => {
     if (!navigator.geolocation) {
-      setGpsError('Geolocation is not supported by your browser.');
+      setGpsError('unsupported');
       return;
     }
 
@@ -166,9 +178,9 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
         onSelectLocation(newLoc);
         onClose();
       },
-      (err) => {
+      () => {
         setIsDetectingGps(false);
-        setGpsError(err.message || 'Unable to retrieve your location. Check browser permissions.');
+        setGpsError('failed');
       },
       { timeout: 10000, enableHighAccuracy: true }
     );
@@ -208,14 +220,14 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
             </div>
             <div className="min-w-0">
               <h2 id="location-manager-title" className="text-lg font-semibold tracking-[-0.025em] text-foreground">
-                Prayer locations
+                {t.locations.title}
               </h2>
               <p className="mt-0.5 text-xs leading-5 text-foreground/50">
-                Search, save, and compare cities around the world.
+                {t.locations.subtitle}
               </p>
             </div>
           </div>
-          <button id="btn-close-location-modal" type="button" onClick={onClose} className="icon-button" aria-label="Close locations">
+          <button id="btn-close-location-modal" type="button" onClick={onClose} className="icon-button" aria-label={t.locations.close}>
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
@@ -230,8 +242,8 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
               : 'border-transparent text-foreground/48 hover:bg-surface/60 hover:text-foreground'
               }`}
           >
-            <Search className="w-3.5 h-3.5" />
-            Search All Cities ({displayedCities.length})
+            <Search className="w-3.5 h-3.5" aria-hidden="true" />
+            {t.locations.searchTab} ({displayedCities.length})
           </button>
 
           <button
@@ -242,8 +254,8 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
               : 'border-transparent text-foreground/48 hover:bg-surface/60 hover:text-foreground'
               }`}
           >
-            <MapPin className="w-3.5 h-3.5" />
-            My Saved Cities ({locations.length})
+            <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
+            {t.locations.savedTab} ({locations.length})
           </button>
 
           <button
@@ -254,8 +266,8 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
               : 'border-transparent text-foreground/48 hover:bg-surface/60 hover:text-foreground'
               }`}
           >
-            <Layers className="w-3.5 h-3.5" />
-            Multi-City Timetable
+            <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+            {t.locations.compareTab}
           </button>
 
           <button
@@ -266,8 +278,8 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
               : 'border-transparent text-foreground/48 hover:bg-surface/60 hover:text-foreground'
               }`}
           >
-            <Plus className="w-3.5 h-3.5" />
-            Custom Lat / Lng
+            <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+            {t.locations.customTab}
           </button>
         </div>
 
@@ -281,12 +293,13 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
               {/* Main Search Input */}
               <div className="space-y-2">
                 <div className="relative">
-                  <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-foreground/38" aria-hidden="true" />
+                  <Search className="absolute start-3.5 top-3.5 h-5 w-5 text-foreground/38" aria-hidden="true" />
                   <input
                     id="input-global-city-search"
                     type="text"
                     autoFocus
-                    placeholder="Search by city or country"
+                    placeholder={t.locations.placeholder}
+                    aria-label={t.locations.placeholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="form-control py-3 pe-10 ps-11 text-sm font-medium"
@@ -294,7 +307,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-3.5 top-3.5 text-foreground/35 hover:text-foreground"
+                      className="absolute end-3.5 top-3.5 text-foreground/35 hover:text-foreground"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -306,12 +319,12 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                     {isSearching ? (
                       <>
                         <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" aria-hidden="true" />
-                        Searching cities…
+                        {t.locations.searching}
                       </>
                     ) : searchQuery ? (
-                      <>Found {displayedCities.length} matching cities worldwide</>
+                      <>{t.locations.found.replace('{count}', String(displayedCities.length))}</>
                     ) : (
-                      <>Popular cities are shown. Type any place to search worldwide.</>
+                      <>{t.locations.popular}</>
                     )}
                   </span>
 
@@ -322,18 +335,18 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                     className="text-primary font-semibold hover:underline flex items-center gap-1"
                   >
                     <Navigation className="h-3 w-3 text-primary" aria-hidden="true" />
-                    {isDetectingGps ? 'Locating...' : 'Use Current GPS'}
+                    {isDetectingGps ? t.locations.locating : t.locations.gps}
                   </button>
                 </div>
-                {gpsError && (
-                  <p className="text-xs text-red-600 font-medium px-1">{gpsError}</p>
+                {gpsErrorMessage && (
+                  <p className="text-xs text-red-600 font-medium px-1">{gpsErrorMessage}</p>
                 )}
               </div>
 
               {/* World Region Selector (visible when no search query) */}
               {!searchQuery && (
                 <div className="space-y-1.5">
-                  <h3 className="text-sm font-semibold text-foreground">Filter by region</h3>
+                  <h3 className="text-sm font-semibold text-foreground">{t.locations.filterRegion}</h3>
                   <div className="flex flex-wrap gap-1.5">
                     {WORLD_REGIONS.map((region) => (
                       <button
@@ -344,7 +357,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                           : 'border-muted-border bg-surface text-foreground/58 hover:bg-muted hover:text-foreground'
                           }`}
                       >
-                        {region}
+                        {language === 'ar' ? (REGION_AR[region] || region) : region}
                       </button>
                     ))}
                   </div>
@@ -356,9 +369,11 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                 {displayedCities.length === 0 ? (
                   <div className="rounded-[0.75rem_0.75rem_0.25rem_0.25rem] border border-dashed border-muted-border bg-muted/55 p-6 text-center">
                     <Globe className="mx-auto mb-2 h-8 w-8 text-foreground/32" aria-hidden="true" />
-                    <p className="text-sm font-semibold text-foreground">No cities found matching “{searchQuery}”</p>
+                    <p className="text-sm font-semibold text-foreground">
+                      {t.locations.noResults.replace('{query}', searchQuery)}
+                    </p>
                     <p className="mt-1 text-xs text-foreground/48">
-                      Try checking spelling or add custom coordinates in the "Custom Lat/Lng" tab.
+                      {t.locations.noResultsHint}
                     </p>
                   </div>
                 ) : (
@@ -377,7 +392,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                           : 'border-muted-border bg-surface hover:bg-muted'
                           }`}
                       >
-                        <div className="flex items-center space-x-3 min-w-0 flex-1">
+                        <div className="flex min-w-0 flex-1 items-center gap-3">
                           <div
                             className={`grid h-9 w-9 shrink-0 place-items-center rounded-[0.6rem_0.6rem_0.18rem_0.18rem] text-sm font-bold ${isAlreadyActive || isSaved
                               ? 'bg-primary text-white'
@@ -390,18 +405,18 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="truncate text-sm font-semibold text-foreground">
-                                {city.name}
+                                {getCityDisplayName(city, language)}
                               </span>
-                              {city.admin1 && (
+                              {getAdminDisplayName(city, language) && (
                                 <span className="truncate text-xs text-foreground/45">
-                                  {city.admin1}
+                                  {getAdminDisplayName(city, language)}
                                 </span>
                               )}
                               <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground/55">
-                                {city.country}
+                                {getCountryDisplayName(city, language)}
                               </span>
                               {isAlreadyActive && (
-                                <span className="text-[0.66rem] font-semibold text-primary">Active</span>
+                                <span className="text-[0.66rem] font-semibold text-primary">{t.locations.active}</span>
                               )}
                             </div>
 
@@ -416,7 +431,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                         <div className="shrink-0">
                           {isAlreadyActive ? (
                             <span className="flex items-center gap-1 text-xs font-semibold text-primary">
-                              <Check className="h-3.5 w-3.5" aria-hidden="true" /> Selected
+                              <Check className="h-3.5 w-3.5" aria-hidden="true" /> {t.locations.selected}
                             </span>
                           ) : (
                             <button
@@ -424,7 +439,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                               onClick={() => handleSelectOrAddCity(city)}
                               className="primary-button min-h-9 px-3 py-1.5"
                             >
-                              <Check className="w-3 h-3" /> Select City
+                              <Check className="w-3 h-3" aria-hidden="true" /> {t.locations.selectCity}
                             </button>
                           )}
                         </div>
@@ -441,13 +456,13 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
           {activeTab === 'saved' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-foreground">Saved cities</h3>
+                <h3 className="text-sm font-semibold text-foreground">{t.locations.savedCities}</h3>
                 <button
                   onClick={() => setActiveTab('search')}
                   className="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  Search &amp; Add More Cities
+                  <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                  {t.locations.searchAdd}
                 </button>
               </div>
 
@@ -468,7 +483,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                           onSelectLocation(loc);
                           onClose();
                         }}
-                        className="flex min-w-0 flex-1 items-center space-x-3 text-start"
+                        className="flex min-w-0 flex-1 items-center gap-3 text-start"
                       >
                         <div
                           className={`grid h-9 w-9 shrink-0 place-items-center rounded-[0.6rem_0.6rem_0.18rem_0.18rem] text-sm font-bold ${isActive
@@ -481,19 +496,19 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                         <div>
                           <div className="flex items-center gap-2">
                             <h4 className="text-sm font-semibold text-foreground">
-                              {loc.name}
+                              {getCityDisplayName(loc, language)}
                             </h4>
                             {isActive && (
-                              <span className="text-[0.66rem] font-semibold text-primary">Active</span>
+                              <span className="text-[0.66rem] font-semibold text-primary">{t.locations.active}</span>
                             )}
                           </div>
                           <p className="mt-0.5 text-xs text-foreground/46">
-                            {loc.country}{loc.admin1 ? `, ${loc.admin1}` : ''}, {loc.latitude}°, {loc.longitude}°
+                            {formatLocationDisplay(loc, language)}{loc.admin1 ? `, ${getAdminDisplayName(loc, language)}` : ''}, {loc.latitude}°, {loc.longitude}°
                           </p>
                         </div>
                       </button>
 
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         {!isActive && (
                           <button
                             onClick={() => {
@@ -502,14 +517,15 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                             }}
                             className="secondary-button min-h-9 px-3 py-1.5"
                           >
-                            Set Active
+                            {t.locations.setActive}
                           </button>
                         )}
                         {locations.length > 1 && (
                           <button
                             onClick={() => onRemoveLocation(loc.id)}
                             className="icon-button hover:!border-danger/30 hover:!bg-danger/10 hover:!text-danger"
-                            title="Remove from saved"
+                            title={t.locations.remove}
+                            aria-label={t.locations.remove}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -526,7 +542,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
           {activeTab === 'compare' && (
             <div className="space-y-4">
               <div className="text-sm text-foreground/50">
-                Compare today's 5 prayer times across all your saved cities at a glance:
+                {t.locations.compareDescription}
               </div>
 
               <div className="space-y-3">
@@ -546,10 +562,10 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                         <div className="flex items-center gap-2">
                           <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
                           <h4 className="text-sm font-semibold text-foreground">
-                            {loc.name}, {loc.country}
+                            {formatLocationDisplay(loc, language)}
                           </h4>
                           {isCurrent && (
-                            <span className="text-[0.65rem] font-semibold text-primary">Active</span>
+                            <span className="text-[0.65rem] font-semibold text-primary">{t.locations.active}</span>
                           )}
                         </div>
                         {!isCurrent && (
@@ -560,7 +576,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                             }}
                             className="text-xs text-primary font-semibold hover:underline"
                           >
-                            Switch to this city
+                            {t.locations.switchCity}
                           </button>
                         )}
                       </div>
@@ -568,33 +584,33 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                       {/* 5 Prayers Grid */}
                       <div className="grid grid-cols-5 overflow-hidden rounded-[0.55rem_0.55rem_0.18rem_0.18rem] border border-muted-border text-center text-xs">
                         <div className="border-e border-muted-border bg-muted/55 p-2 last:border-e-0">
-                          <div className="text-[0.62rem] font-semibold text-foreground/45">Fajr</div>
+                          <div className="text-[0.62rem] font-semibold text-foreground/45">{PRAYER_DISPLAY_NAMES.fajr[language]}</div>
                           <div className="font-mono font-bold text-primary mt-0.5">
-                            {formatPrayerTime(todaySched.prayers.fajr, calculationSettings.timeFormat, loc.timezone)}
+                            {formatPrayerTime(todaySched.prayers.fajr, calculationSettings.timeFormat, loc.timezone, locale)}
                           </div>
                         </div>
                         <div className="border-e border-muted-border bg-muted/55 p-2 last:border-e-0">
-                          <div className="text-[0.62rem] font-semibold text-foreground/45">Dhuhr</div>
+                          <div className="text-[0.62rem] font-semibold text-foreground/45">{PRAYER_DISPLAY_NAMES.dhuhr[language]}</div>
                           <div className="font-mono font-bold text-primary mt-0.5">
-                            {formatPrayerTime(todaySched.prayers.dhuhr, calculationSettings.timeFormat, loc.timezone)}
+                            {formatPrayerTime(todaySched.prayers.dhuhr, calculationSettings.timeFormat, loc.timezone, locale)}
                           </div>
                         </div>
                         <div className="border-e border-muted-border bg-muted/55 p-2 last:border-e-0">
-                          <div className="text-[0.62rem] font-semibold text-foreground/45">Asr</div>
+                          <div className="text-[0.62rem] font-semibold text-foreground/45">{PRAYER_DISPLAY_NAMES.asr[language]}</div>
                           <div className="font-mono font-bold text-primary mt-0.5">
-                            {formatPrayerTime(todaySched.prayers.asr, calculationSettings.timeFormat, loc.timezone)}
+                            {formatPrayerTime(todaySched.prayers.asr, calculationSettings.timeFormat, loc.timezone, locale)}
                           </div>
                         </div>
                         <div className="border-e border-muted-border bg-primary/[0.07] p-2">
-                          <div className="text-[0.62rem] font-semibold text-primary">Maghrib</div>
+                          <div className="text-[0.62rem] font-semibold text-primary">{PRAYER_DISPLAY_NAMES.maghrib[language]}</div>
                           <div className="mt-0.5 font-mono font-semibold text-foreground">
-                            {formatPrayerTime(todaySched.prayers.maghrib, calculationSettings.timeFormat, loc.timezone)}
+                            {formatPrayerTime(todaySched.prayers.maghrib, calculationSettings.timeFormat, loc.timezone, locale)}
                           </div>
                         </div>
                         <div className="border-e border-muted-border bg-muted/55 p-2 last:border-e-0">
-                          <div className="text-[0.62rem] font-semibold text-foreground/45">Isha</div>
+                          <div className="text-[0.62rem] font-semibold text-foreground/45">{PRAYER_DISPLAY_NAMES.isha[language]}</div>
                           <div className="font-mono font-bold text-primary mt-0.5">
-                            {formatPrayerTime(todaySched.prayers.isha, calculationSettings.timeFormat, loc.timezone)}
+                            {formatPrayerTime(todaySched.prayers.isha, calculationSettings.timeFormat, loc.timezone, locale)}
                           </div>
                         </div>
                       </div>
@@ -612,13 +628,13 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                 <div>
                   <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
                     <Navigation className="h-4 w-4 text-primary" aria-hidden="true" />
-                    Detect via GPS
+                    {t.locations.detectGps}
                   </h4>
                   <p className="mt-0.5 text-xs text-foreground/48">
-                    Fetch your exact device coordinates automatically
+                    {t.locations.detectGpsDescription}
                   </p>
-                  {gpsError && (
-                    <p className="text-xs text-red-600 mt-1 font-medium">{gpsError}</p>
+                  {gpsErrorMessage && (
+                    <p className="text-xs text-red-600 mt-1 font-medium">{gpsErrorMessage}</p>
                   )}
                 </div>
                 <button
@@ -628,19 +644,20 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                   className="primary-button shrink-0 disabled:opacity-50"
                 >
                   <Navigation className="w-3.5 h-3.5" />
-                  {isDetectingGps ? 'Locating...' : 'Auto Detect GPS'}
+                  {isDetectingGps ? t.locations.locating : t.locations.autoDetect}
                 </button>
               </div>
 
               <form onSubmit={handleAddCustom} className="space-y-4 rounded-[0.75rem_0.75rem_0.25rem_0.25rem] border border-muted-border bg-muted/55 p-5">
-                <h3 className="text-sm font-semibold text-foreground">Add custom coordinates</h3>
+                <h3 className="text-sm font-semibold text-foreground">{t.locations.addCoordinates}</h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-foreground/58">Location / City Name</label>
+                    <label htmlFor="input-custom-city-name" className="mb-1 block text-xs font-medium text-foreground/58">{t.locations.cityName}</label>
                     <input
+                      id="input-custom-city-name"
                       type="text"
-                      placeholder="e.g. Oxford, Cambridge, My Town"
+                      placeholder={t.locations.cityPlaceholder}
                       value={customName}
                       onChange={(e) => setCustomName(e.target.value)}
                       required
@@ -648,21 +665,23 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-foreground/58">Country / Territory</label>
+                    <label htmlFor="input-custom-country" className="mb-1 block text-xs font-medium text-foreground/58">{t.locations.countryName}</label>
                     <input
+                      id="input-custom-country"
                       type="text"
-                      placeholder="e.g. United Kingdom"
+                      placeholder={t.locations.countryPlaceholder}
                       value={customCountry}
                       onChange={(e) => setCustomCountry(e.target.value)}
                       className="form-control px-3.5 py-2.5 text-sm"
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-foreground/58">Latitude (-90 to +90)</label>
+                    <label htmlFor="input-custom-latitude" className="mb-1 block text-xs font-medium text-foreground/58">{t.locations.latitude}</label>
                     <input
+                      id="input-custom-latitude"
                       type="number"
                       step="any"
-                      placeholder="e.g. 51.7520"
+                      placeholder="51.7520"
                       value={customLat}
                       onChange={(e) => setCustomLat(e.target.value)}
                       required
@@ -670,11 +689,12 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-foreground/58">Longitude (-180 to +180)</label>
+                    <label htmlFor="input-custom-longitude" className="mb-1 block text-xs font-medium text-foreground/58">{t.locations.longitude}</label>
                     <input
+                      id="input-custom-longitude"
                       type="number"
                       step="any"
-                      placeholder="e.g. -1.2577"
+                      placeholder="-1.2577"
                       value={customLng}
                       onChange={(e) => setCustomLng(e.target.value)}
                       required
@@ -687,7 +707,7 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
                   type="submit"
                   className="primary-button w-full"
                 >
-                  Save &amp; Set Active
+                  {t.locations.saveActive}
                 </button>
               </form>
             </div>
@@ -698,10 +718,10 @@ export const LocationManagerModal: React.FC<LocationManagerModalProps> = ({
         {/* Footer */}
         <div className="modal-footer justify-between">
           <span className="min-w-0 truncate text-xs text-foreground/48">
-            Active: <strong className="font-semibold text-foreground/75">{activeLocation.name}, {activeLocation.country}</strong>
+            {t.locations.activeLocation} <strong className="font-semibold text-foreground/75">{formatLocationDisplay(activeLocation, language)}</strong>
           </span>
           <button type="button" onClick={onClose} className="primary-button shrink-0">
-            Done
+            {t.locations.done}
           </button>
         </div>
 

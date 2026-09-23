@@ -56,7 +56,7 @@ const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
 };
 
 export default function App() {
-  const { t } = useLanguage();
+  const { language, t, locale } = useLanguage();
 
   // 1. Locations State
   const [locations, setLocations] = useState<LocationItem[]>(() => {
@@ -165,7 +165,7 @@ export default function App() {
   // Week Schedule Calculation (Today + Next 7 days)
   const weekSchedule = useMemo(() => {
     return calculateWeekSchedule(activeLocation, calculationSettings, currentTime);
-  }, [activeLocation, calculationSettings, currentTime.toDateString()]);
+  }, [activeLocation, calculationSettings, currentTime.getHours() * 60 + currentTime.getMinutes()]);
 
   const todaySchedule = weekSchedule[0];
   const tomorrowSchedule = weekSchedule[1] || weekSchedule[0];
@@ -284,9 +284,10 @@ export default function App() {
     return formatPrayerTime(
       prayerStatus.nextPrayerTime,
       calculationSettings.timeFormat,
-      activeLocation.timezone
+      activeLocation.timezone,
+      locale
     );
-  }, [prayerStatus.nextPrayerTime, calculationSettings.timeFormat, activeLocation.timezone]);
+  }, [prayerStatus.nextPrayerTime, calculationSettings.timeFormat, activeLocation.timezone, locale]);
 
   return (
     <div className="app-shell flex min-h-screen flex-col font-sans text-foreground">
@@ -329,9 +330,9 @@ export default function App() {
             <span className="grid h-6 w-6 place-items-center rounded-md bg-primary text-white">
               <Mosque className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
-            <span className="font-semibold text-foreground/80">Prayer Times &amp; Adhan</span>
+            <span className="font-semibold text-foreground/80">{t.appTitle} &amp; {language === 'ar' ? 'الأذان' : 'Adhan'}</span>
           </div>
-          <nav className="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Settings">
+          <nav className="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label={t.settingsNavigation}>
             <button type="button" onClick={() => setIsSettingsModalOpen(true)} className="footer-link">
               {t.calculationSettings}
             </button>
