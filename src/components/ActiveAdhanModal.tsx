@@ -1,13 +1,5 @@
 import React from 'react';
-import { 
-  Square, 
-  Volume2, 
-  Sparkles, 
-  MapPin, 
-  Clock, 
-  CheckCircle2, 
-  X 
-} from 'lucide-react';
+import { Square, Sparkles, MapPin, CheckCircle2, X } from 'lucide-react';
 import { ActiveAdhanAlert } from '../types';
 import { PRAYER_DISPLAY_NAMES } from '../services/prayerService';
 
@@ -32,114 +24,114 @@ export const ActiveAdhanModal: React.FC<ActiveAdhanModalProps> = ({
     meaning: '',
   };
 
+  const closeAndStop = () => {
+    onStopAudio();
+    onClose();
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 p-6 sm:p-8 text-black dark:text-white shadow-2xl overflow-hidden text-center space-y-6">
-
-        {/* Close icon */}
-        <button
-          id="btn-close-active-adhan"
-          onClick={() => {
-            onStopAudio();
-            onClose();
-          }}
-          className="absolute top-4 right-4 p-2 rounded-full text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Header Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 text-xs font-semibold">
-          <Sparkles className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
-          {alert.isLeadReminder ? `Reminder: ${alert.leadMinutes}m before prayer` : 'Prayer Time Alert'}
-        </div>
-
-        {/* Prayer Name in Large Arabic & English */}
-        <div className="space-y-2">
-          <div className="text-3xl sm:text-4xl font-serif text-neutral-500 dark:text-neutral-400">
-            {prayerMeta.ar}
+    <div className="modal-backdrop">
+      <div
+        className="modal-panel max-w-xl !border-white/10 !bg-[#0c2630] !text-white"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="adhan-alert-title"
+      >
+        <div className="relative flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-6">
+          <div className="flex items-center gap-2 text-xs text-white/52">
+            <Sparkles className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+            <span>{alert.isLeadReminder ? `${alert.leadMinutes} minutes before prayer` : 'Prayer time'}</span>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-extrabold font-serif tracking-tight text-black dark:text-white">
-            {alert.isLeadReminder ? `Prepare for ${prayerMeta.en}` : `Adhan: ${prayerMeta.en}`}
-          </h2>
-          <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center justify-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
-            {alert.locationName}
-          </div>
-        </div>
-
-        {/* Animated Audio Equalizer Visualizer */}
-        {isAudioPlaying && (
-          <div className="py-2 flex items-center justify-center gap-1.5">
-            {[40, 75, 55, 90, 65, 80, 45, 95, 60, 85, 50].map((h, i) => (
-              <div
-                key={i}
-                className="w-1.5 bg-black dark:bg-white rounded-full animate-pulse"
-                style={{
-                  height: `${h}%`,
-                  animationDuration: `${0.6 + (i % 4) * 0.2}s`,
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Canonical Words of the Adhan / Call */}
-        <div className="p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-xs space-y-2 font-serif text-neutral-800 dark:text-neutral-200 leading-relaxed">
-          <p className="text-base text-black dark:text-white">
-            اللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ &bull; أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ
-          </p>
-          <p className="text-xs font-sans text-neutral-500 dark:text-neutral-400">
-            "Allah is the Greatest. I bear witness that there is no deity worthy of worship except Allah."
-          </p>
-        </div>
-
-        {/* Dua After Adhan Reference */}
-        <div className="text-left p-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-[11px] text-neutral-600 dark:text-neutral-400 space-y-1">
-          <span className="font-bold text-black dark:text-white block uppercase tracking-wider text-[10px]">
-            Dua After Adhan (Sunnah):
-          </span>
-          <p className="font-serif text-xs text-neutral-800 dark:text-neutral-200">
-            اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ، وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّداً الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَاماً مَحْمُوداً الَّذِي وَعَدْتَهُ
-          </p>
-          <p className="text-neutral-500 dark:text-neutral-400 italic">
-            "O Allah, Lord of this perfect call and established prayer, grant Muhammad the station of intercession and nobility, and raise him to the praised station which You promised him."
-          </p>
-        </div>
-
-        {/* Action Controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-          {isAudioPlaying ? (
-            <button
-              id="btn-modal-stop-adhan"
-              onClick={onStopAudio}
-              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-lg shadow-red-950/40 transition-all flex items-center justify-center gap-2 animate-pulse"
-            >
-              <Square className="w-4 h-4 fill-current" />
-              Stop Adhan Audio
-            </button>
-          ) : (
-            <button
-              id="btn-modal-dismiss"
-              onClick={onClose}
-              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-black hover:bg-neutral-800 text-white font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2 dark:bg-neutral-700 dark:hover:bg-neutral-600"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              Acknowledge &amp; Close
-            </button>
-          )}
-
           <button
-            onClick={() => {
-              onStopAudio();
-              onClose();
-            }}
-            className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-black dark:text-white border border-neutral-200 dark:border-neutral-700 text-sm font-medium transition-colors"
+            id="btn-close-active-adhan"
+            type="button"
+            onClick={closeAndStop}
+            className="grid h-9 w-9 place-items-center rounded-lg text-white/48 transition-colors hover:bg-white/10 hover:text-white"
+            aria-label="Close adhan alert"
           >
-            Dismiss
+            <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
+        <div className="relative overflow-y-auto px-5 py-7 text-center sm:px-8 sm:py-8">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-30"
+            style={{
+              backgroundImage: 'radial-gradient(circle, rgba(241,246,241,.7) 0 1px, transparent 1.5px)',
+              backgroundSize: '42px 42px',
+              maskImage: 'radial-gradient(circle at center, #000, transparent 72%)',
+            }}
+            aria-hidden="true"
+          />
+
+          <div className="relative">
+            <p className="font-serif text-3xl leading-none text-accent sm:text-4xl" dir="rtl">
+              {prayerMeta.ar}
+            </p>
+            <h2 id="adhan-alert-title" className="mt-3 text-3xl font-medium tracking-[-0.045em] sm:text-4xl">
+              {alert.isLeadReminder ? `Prepare for ${prayerMeta.en}` : `${prayerMeta.en} is now`}
+            </h2>
+            <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-white/46">
+              <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+              {alert.locationName}
+            </div>
+
+            {isAudioPlaying ? (
+              <div className="mx-auto mt-6 flex h-9 w-fit items-center justify-center gap-1.5 rounded-full border border-white/10 bg-white/[0.045] px-5" aria-label="Adhan is playing">
+                {[0.35, 0.72, 1, 0.5, 0.84, 0.4, 0.64, 0.28].map((height, index) => (
+                  <span
+                    key={index}
+                    className="sound-bar"
+                    style={{ height: `${height * 100}%`, animationDelay: `${index * 90}ms` }}
+                  />
+                ))}
+              </div>
+            ) : null}
+
+            <div className="mx-auto mt-7 max-w-md border-y border-white/10 py-5">
+              <p className="font-serif text-lg leading-relaxed text-white/88" dir="rtl">
+                اللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ
+              </p>
+              <p className="mt-3 text-xs leading-5 text-white/44">
+                “Allah is the Greatest. I bear witness that there is no deity worthy of worship except Allah.”
+              </p>
+            </div>
+
+            <details className="mx-auto mt-4 max-w-md text-start">
+              <summary className="cursor-pointer list-none text-xs font-semibold text-white/58 transition-colors hover:text-white">
+                Dua after the adhan
+              </summary>
+              <div className="mt-3 rounded-[0.7rem_0.7rem_0.22rem_0.22rem] border border-white/10 bg-white/[0.035] p-4">
+                <p className="font-serif text-sm leading-7 text-white/78" dir="rtl">
+                  اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ، وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّداً الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَاماً مَحْمُوداً الَّذِي وَعَدْتَهُ
+                </p>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2.5 border-t border-white/10 bg-black/10 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+          {isAudioPlaying ? (
+            <button
+              id="btn-modal-stop-adhan"
+              type="button"
+              onClick={onStopAudio}
+              className="danger-button min-w-40"
+            >
+              <Square className="h-4 w-4 fill-current" aria-hidden="true" />
+              Stop adhan
+            </button>
+          ) : null}
+          <button
+            id="btn-modal-dismiss"
+            type="button"
+            onClick={closeAndStop}
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[0.65rem] border border-white/14 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/15"
+          >
+            <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+            {isAudioPlaying ? 'Stop and close' : 'Close alert'}
+          </button>
+        </div>
       </div>
     </div>
   );

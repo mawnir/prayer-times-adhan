@@ -9,7 +9,6 @@ import {
   Globe,
   Mosque,
   ChevronDown,
-  Languages,
   Sun,
   Moon,
 } from 'lucide-react';
@@ -45,55 +44,59 @@ export const Header: React.FC<HeaderProps> = ({
   const isDark = theme === 'dark';
   const isMuted = notificationSettings.volume === 0 || !notificationSettings.masterEnabled;
 
-  const activeLocationDropdown = (
-    <div className="relative flex items-center shrink-0">
+  const renderLocationSelect = (idSuffix: 'desktop' | 'mobile') => (
+    <div className="relative flex min-w-0 flex-1 items-center">
+      <MapPin className="ms-2.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
       <select
-        id={`select-location-${activeLocation.id}`}
+        id={`select-location-${activeLocation.id}-${idSuffix}`}
         value={activeLocation.id}
-        onChange={(e) => {
-          const loc = locations.find((l) => l.id === e.target.value);
-          if (loc) onSelectLocation(loc);
+        onChange={(event) => {
+          const location = locations.find((item) => item.id === event.target.value);
+          if (location) onSelectLocation(location);
         }}
-        className="appearance-none pl-2.5 pr-6 py-1 text-xs rounded-md font-medium text-white shadow-xs whitespace-nowrap cursor-pointer transition-colors focus:outline-hidden"
-        style={{ backgroundColor: 'var(--color-primary)' }}
+        className="location-select w-full min-w-0"
         title={`${activeLocation.name}, ${activeLocation.country}`}
+        aria-label="Choose prayer location"
       >
-        {locations.map((loc) => (
-          <option key={loc.id} value={loc.id} className="bg-white text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100">
-            {loc.name}
+        {locations.map((location) => (
+          <option key={location.id} value={location.id}>
+            {location.name}
           </option>
         ))}
       </select>
-      <ChevronDown className={`w-3 h-3 text-white/80 pointer-events-none absolute ${isRTL ? 'left-1.5' : 'right-1.5'}`} />
+      <ChevronDown
+        className={`pointer-events-none absolute h-3 w-3 text-current opacity-50 ${isRTL ? 'left-2' : 'right-2'}`}
+        aria-hidden="true"
+      />
     </div>
   );
 
   const allCitiesButton = (
     <button
-      id="btn-open-location-manager"
+      type="button"
       onClick={onOpenLocationModal}
-      className="px-2 py-1 text-xs text-neutral-600 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-200/80 rounded-md transition-all flex items-center gap-1.5 font-medium shadow-2xs dark:bg-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100 dark:hover:bg-neutral-700 dark:border-neutral-700/80"
+      className="utility-button h-9 shrink-0 gap-1.5 px-2.5 text-[0.72rem] font-semibold"
       title={t.allCities}
     >
-      <Globe className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
-      <span className="text-[11px]">{t.allCities}</span>
+      <Globe className="h-3.5 w-3.5" aria-hidden="true" />
+      <span>{t.allCities}</span>
     </button>
   );
 
-  // Shadcn style language toggle switch
   const languageSwitch = (
     <div
       role="group"
-      aria-label="Language switch"
-      className="inline-flex items-center p-0.5 rounded-lg bg-neutral-100/90 border border-neutral-200/80 text-xs shadow-2xs shrink-0 dark:bg-neutral-800/90 dark:border-neutral-700/80"
+      aria-label="Language"
+      className="inline-flex shrink-0 items-center rounded-[0.65rem] border border-muted-border bg-muted p-0.5 text-[0.68rem]"
     >
       <button
         type="button"
         onClick={() => setLanguage('en')}
-        className={`px-2 py-1 rounded-md text-[11px] font-medium transition-all ${language === 'en'
-          ? 'bg-white text-neutral-900 shadow-xs font-semibold dark:bg-neutral-900 dark:text-neutral-100'
-          : 'text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200'
-          }`}
+        className={`rounded-[0.42rem] px-2 py-1.5 font-semibold transition-colors ${
+          language === 'en'
+            ? 'bg-surface text-foreground shadow-sm'
+            : 'text-foreground/50 hover:text-foreground'
+        }`}
         aria-pressed={language === 'en'}
       >
         EN
@@ -101,10 +104,11 @@ export const Header: React.FC<HeaderProps> = ({
       <button
         type="button"
         onClick={() => setLanguage('ar')}
-        className={`px-2 py-1 rounded-md text-[11px] font-medium transition-all ${language === 'ar'
-          ? 'bg-white text-neutral-900 shadow-xs font-semibold dark:bg-neutral-900 dark:text-neutral-100'
-          : 'text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200'
-          }`}
+        className={`rounded-[0.42rem] px-2 py-1.5 font-semibold transition-colors ${
+          language === 'ar'
+            ? 'bg-surface text-foreground shadow-sm'
+            : 'text-foreground/50 hover:text-foreground'
+        }`}
         aria-pressed={language === 'ar'}
       >
         العربية
@@ -112,125 +116,113 @@ export const Header: React.FC<HeaderProps> = ({
     </div>
   );
 
-  const actionToolbar = (
-    <div className="flex items-center rounded-lg border border-neutral-200/80 bg-white shadow-2xs divide-x rtl:divide-x-reverse divide-neutral-200/80 shrink-0 dark:bg-neutral-900 dark:border-neutral-700/80 dark:divide-neutral-700/80">
-      {/* Dark Theme Quick Toggle */}
+  const renderActionToolbar = (idSuffix: 'desktop' | 'mobile') => (
+    <div className="flex shrink-0 items-center gap-0.5 rounded-[0.7rem] border border-muted-border bg-surface p-0.5">
       <button
-        id="btn-theme-toggle"
+        id={`btn-theme-toggle-${idSuffix}`}
+        type="button"
         onClick={toggleTheme}
-        className="p-2 rounded-s-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 transition-colors dark:text-neutral-300 dark:hover:text-neutral-100 dark:hover:bg-neutral-800"
+        className="utility-button h-9 w-9"
         title={isDark ? t.switchToLightMode : t.switchToDarkMode}
         aria-label={isDark ? t.switchToLightMode : t.switchToDarkMode}
         aria-pressed={isDark}
       >
-        {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+        {isDark ? <Sun className="h-4 w-4" aria-hidden="true" /> : <Moon className="h-4 w-4" aria-hidden="true" />}
       </button>
 
-      {/* Audio Mute Quick Toggle */}
-      {/* <button
-        id="btn-quick-mute"
+      <button
+        id={`btn-quick-mute-${idSuffix}`}
+        type="button"
         onClick={onToggleMute}
-        className={`p-2 rounded-s-lg transition-colors ${
-          isMuted
-            ? 'bg-red-50 text-red-600 hover:bg-red-100'
-            : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
-        }`}
+        className={`utility-button h-9 w-9 ${isMuted ? 'text-danger' : ''}`}
         title={isMuted ? t.unmuteAudio : t.muteAudio}
         aria-label={isMuted ? t.unmuteAudio : t.muteAudio}
+        aria-pressed={isMuted}
       >
-        {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-      </button> */}
+        {isMuted ? <VolumeX className="h-4 w-4" aria-hidden="true" /> : <Volume2 className="h-4 w-4" aria-hidden="true" />}
+      </button>
 
-      {/* Notification Settings */}
       <button
-        id="btn-notification-settings"
+        id={`btn-notification-settings-${idSuffix}`}
+        type="button"
         onClick={onOpenNotificationModal}
-        className={`relative p-2 transition-colors ${notificationSettings.masterEnabled
-          ? 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:text-neutral-100 dark:hover:bg-neutral-800'
-          : 'bg-neutral-50/70 text-neutral-400 hover:bg-neutral-100 dark:bg-neutral-800/70 dark:text-neutral-500 dark:hover:bg-neutral-700'
-          }`}
+        className="utility-button relative h-9 w-9"
         title={t.notificationSettings}
         aria-label={t.notificationSettings}
       >
-        <Bell className="w-4 h-4" />
+        <Bell className="h-4 w-4" aria-hidden="true" />
         {notificationSettings.masterEnabled && (
           <span
-            className={`absolute top-1.5 ${isRTL ? 'left-1.5' : 'right-1.5'} w-1.5 h-1.5 rounded-full animate-pulse`}
-            style={{ backgroundColor: 'var(--color-primary)' }}
+            className="absolute end-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-accent ring-2 ring-surface"
+            aria-hidden="true"
           />
         )}
       </button>
 
-      {/* Qibla Direction */}
       <button
-        id="btn-qibla-compass"
+        id={`btn-qibla-compass-${idSuffix}`}
+        type="button"
         onClick={onOpenQiblaModal}
-        className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 transition-colors dark:text-neutral-300 dark:hover:text-neutral-100 dark:hover:bg-neutral-800"
+        className="utility-button h-9 w-9 max-[419px]:hidden"
         title={t.qiblaCompass}
         aria-label={t.qiblaCompass}
       >
-        <Compass className="w-4 h-4" />
+        <Compass className="h-4 w-4" aria-hidden="true" />
       </button>
 
-      {/* Calculation Settings */}
       <button
-        id="btn-calc-settings"
+        id={`btn-calc-settings-${idSuffix}`}
+        type="button"
         onClick={onOpenSettingsModal}
-        className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-e-lg transition-colors dark:text-neutral-300 dark:hover:text-neutral-100 dark:hover:bg-neutral-800"
+        className="utility-button h-9 w-9"
         title={t.calculationSettings}
         aria-label={t.calculationSettings}
       >
-        <Settings className="w-4 h-4" />
+        <Settings className="h-4 w-4" aria-hidden="true" />
       </button>
     </div>
   );
 
   return (
-    <header className="sticky top-0 z-30 bg-neutral-50 backdrop-blur-md border-b border-neutral-200/80 text-neutral-900 dark:bg-neutral-900/95 dark:border-neutral-700/80 dark:text-neutral-100">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between gap-3 py-2.5">
-          {/* Logo & Title */}
-          <div className="flex items-center gap-3 min-w-0">
-            <div
-              className="w-9 h-9 shrink-0 rounded-lg flex items-center justify-center shadow-xs transition-colors"
-              style={{ backgroundColor: 'var(--color-primary)' }}
-            >
-              <Mosque className="w-5 h-5 text-white" />
+    <header className="app-header sticky top-0 z-30 text-foreground">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex min-h-16 items-center justify-between gap-4 py-2">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="brand-mark" aria-hidden="true">
+              <Mosque className="h-[1.15rem] w-[1.15rem]" strokeWidth={1.8} />
             </div>
-            <div className="min-w-0">
-              <h1 className="font-sans text-base sm:text-lg font-semibold tracking-tight text-neutral-900 flex items-center gap-2 dark:text-neutral-100">
+            <div className="hidden min-w-0 min-[360px]:block md:hidden lg:block">
+              <h1 className="truncate text-[1.02rem] font-semibold tracking-[-0.025em] text-foreground">
                 {t.appTitle}
               </h1>
-              <p className="text-[11px] text-neutral-500 truncate hidden sm:block dark:text-neutral-400">
+              <p className="hidden truncate text-[0.7rem] text-foreground/52 sm:block">
                 {t.appSubtitle}
               </p>
             </div>
           </div>
 
-          {/* Controls Right Section */}
-          <div className="flex items-center gap-2.5">
-            {/* Desktop Quick Location Selector */}
-            <div className="hidden md:flex items-center bg-neutral-50 border border-neutral-200/80 rounded-lg p-1 max-w-80 overflow-x-auto scrollbar-none shadow-2xs gap-1 dark:bg-neutral-800/70 dark:border-neutral-700/80">
-              <MapPin className="w-3.5 h-3.5 text-neutral-500 mx-1 shrink-0 dark:text-neutral-400" />
-              {activeLocationDropdown}
+          <div className="hidden items-center gap-2 md:flex">
+            <div className="flex max-w-80 min-w-52 items-center rounded-[0.7rem] border border-muted-border bg-muted p-0.5">
+              {renderLocationSelect('desktop')}
+              <span className="h-5 w-px shrink-0 bg-muted-border" aria-hidden="true" />
               {allCitiesButton}
             </div>
+            <div className="hidden lg:block">{languageSwitch}</div>
+            {renderActionToolbar('desktop')}
+          </div>
 
-            {/* Language Switch Toggle */}
-            {languageSwitch}
-
-            {/* Action Icon Toolbar */}
-            {actionToolbar}
+          <div className="flex items-center gap-1.5 md:hidden">
+            {renderActionToolbar('mobile')}
           </div>
         </div>
 
-        {/* Mobile Location Row */}
-        <div className="md:hidden flex items-center gap-2 pb-2.5 pt-0.5">
-          <div className="flex items-center flex-1 min-w-0 bg-neutral-50 border border-neutral-200/80 rounded-lg p-1 overflow-x-auto scrollbar-none shadow-2xs gap-1 dark:bg-neutral-800/70 dark:border-neutral-700/80">
-            <MapPin className="w-3.5 h-3.5 text-neutral-500 mx-1 shrink-0 dark:text-neutral-400" />
-            {activeLocationDropdown}
+        <div className="flex items-center gap-2 pb-2.5 md:hidden">
+          <div className="flex min-w-0 flex-1 items-center rounded-[0.7rem] border border-muted-border bg-muted p-0.5">
+            {renderLocationSelect('mobile')}
+            <span className="h-5 w-px shrink-0 bg-muted-border" aria-hidden="true" />
             {allCitiesButton}
           </div>
+          {languageSwitch}
         </div>
       </div>
     </header>

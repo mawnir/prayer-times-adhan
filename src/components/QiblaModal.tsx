@@ -1,11 +1,8 @@
 import React from 'react';
-import {
-  X,
-  Compass,
-  MapPin
-} from 'lucide-react';
+import { X, Compass, MapPin } from 'lucide-react';
 import { LocationItem } from '../types';
 import { getQiblaInfo } from '../services/prayerService';
+import { useLanguage } from '../context/LanguageContext';
 
 interface QiblaModalProps {
   isOpen: boolean;
@@ -13,147 +10,102 @@ interface QiblaModalProps {
   location: LocationItem;
 }
 
-export const QiblaModal: React.FC<QiblaModalProps> = ({
-  isOpen,
-  onClose,
-  location,
-}) => {
+function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const radiusKm = 6371;
+  const deltaLat = ((lat2 - lat1) * Math.PI) / 180;
+  const deltaLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(deltaLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(deltaLon / 2) ** 2;
+  return Math.round(radiusKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+export const QiblaModal: React.FC<QiblaModalProps> = ({ isOpen, onClose, location }) => {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   const { angle, cardinal } = getQiblaInfo(location);
-
-  // Approximate distance to Kaaba in Makkah (21.4225, 39.8262) using Haversine formula
-  const getDistanceKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371; // Earth radius in km
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return Math.round(R * c);
-  };
-
   const distanceKm = getDistanceKm(location.latitude, location.longitude, 21.4225, 39.8262);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 animate-in fade-in duration-150">
-      <div className="bg-white dark:bg-neutral-900 w-full max-w-md rounded-3xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden flex flex-col max-h-[92vh] text-center">
-
-        {/* Header */}
-        <div className="p-4 sm:p-5 bg-white dark:bg-neutral-900 text-primary flex items-center justify-between border-b border-neutral-200 dark:border-neutral-700 shrink-0">
-          <div className="flex items-center space-x-3 text-left">
-            <div className="p-2 rounded-xl bg-primary text-white">
-              <Compass className="w-5 h-5" />
+    <div className="modal-backdrop">
+      <div className="modal-panel max-w-md" role="dialog" aria-modal="true" aria-labelledby="qibla-title">
+        <div className="modal-header">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-[0.7rem_0.7rem_0.25rem_0.25rem] bg-primary text-white">
+              <Compass className="h-[1.1rem] w-[1.1rem]" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="font-bold text-lg font-serif flex items-center gap-2">
-                Qibla Direction
-                <span className="text-[10px] font-sans font-medium px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
-                  Kaaba Compass
-                </span>
-              </h3>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Direction towards the Kaaba in Makkah
-              </p>
+              <h2 id="qibla-title" className="text-lg font-semibold tracking-[-0.025em] text-foreground">
+                {t.qiblaDirection}
+              </h2>
+              <p className="mt-0.5 text-xs text-foreground/50">From {location.name}, {location.country}</p>
             </div>
           </div>
-          <button
-            id="btn-close-qibla-modal"
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-neutral-500 dark:text-neutral-400 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-          >
-            <X className="w-5 h-5" />
+          <button id="btn-close-qibla-modal" type="button" onClick={onClose} className="icon-button" aria-label="Close compass">
+            <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
-        {/* Compass Body */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
+        <div className="modal-body">
+          <div className="relative mx-auto grid aspect-square w-full max-w-[17rem] place-items-center overflow-hidden rounded-full border border-white/10 bg-[#0c2630] text-white shadow-[inset_0_0_0_1.25rem_rgba(255,255,255,0.025)]">
+            <div className="absolute inset-5 rounded-full border border-dashed border-white/16" aria-hidden="true" />
+            <div className="absolute inset-10 rounded-full border border-white/8" aria-hidden="true" />
 
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 text-xs font-medium">
-            <MapPin className="w-3.5 h-3.5 text-primary" />
-            From: {location.name}, {location.country}
-          </div>
+            <span className="absolute top-4 text-[0.65rem] font-semibold text-accent">N</span>
+            <span className="absolute end-4 text-[0.65rem] font-semibold text-white/45">E</span>
+            <span className="absolute bottom-4 text-[0.65rem] font-semibold text-white/45">S</span>
+            <span className="absolute start-4 text-[0.65rem] font-semibold text-white/45">W</span>
 
-          {/* Compass Rose Dial Graphic */}
-          <div className="relative w-56 h-56 mx-auto flex items-center justify-center">
-            
-            {/* Outer Ring with Cardinal Marks */}
-            <div className="absolute inset-0 rounded-full border-4 border-neutral-200 dark:border-neutral-700 shadow-inner flex items-center justify-center bg-neutral-50 dark:bg-neutral-800">
-              
-              {/* N, E, S, W labels */}
-              <span className="absolute top-2 font-bold text-xs text-primary">N</span>
-              <span className="absolute right-2 font-bold text-xs text-neutral-500 dark:text-neutral-400">E</span>
-              <span className="absolute bottom-2 font-bold text-xs text-neutral-500 dark:text-neutral-400">S</span>
-              <span className="absolute left-2 font-bold text-xs text-neutral-500 dark:text-neutral-400">W</span>
-
-              {/* Tick marks */}
-              <div className="absolute top-0 w-0.5 h-2 bg-primary" />
-              <div className="absolute right-0 h-0.5 w-2 bg-neutral-400" />
-              <div className="absolute bottom-0 w-0.5 h-2 bg-neutral-400" />
-              <div className="absolute left-0 h-0.5 w-2 bg-neutral-400" />
-            </div>
-
-            {/* Rotating Qibla Needle */}
             <div
-              className="absolute inset-0 flex items-center justify-center transition-transform duration-700 ease-out"
+              className="absolute inset-5 transition-transform duration-700 ease-out motion-reduce:transition-none"
               style={{ transform: `rotate(${angle}deg)` }}
+              aria-hidden="true"
             >
-              {/* Needle pointing to Kaaba */}
-              <div className="flex flex-col items-center h-full justify-between py-5">
-                {/* Pointer tip with Kaaba Icon */}
+              <div className="flex h-full flex-col items-center justify-between py-3">
                 <div className="flex flex-col items-center">
-                  <div className="w-6 h-6 rounded-lg bg-primary text-white shadow-xs flex items-center justify-center text-xs">
-                    🕋
-                  </div>
-                  <div className="w-0.5 h-12 bg-primary rounded-full" />
+                  <span className="grid h-7 w-7 place-items-center rounded-[0.25rem] border border-accent/65 bg-accent text-sm text-[#0c2630] shadow-[0_0_0_4px_rgba(200,163,91,0.12)]">◆</span>
+                  <span className="h-12 w-0.5 rounded-full bg-accent" />
                 </div>
-                <div className="w-0.5 h-8 bg-neutral-300 rounded-full dark:bg-neutral-600" />
+                <span className="h-7 w-0.5 rounded-full bg-white/18" />
               </div>
             </div>
 
-            {/* Center Pivot Point */}
-            <div className="w-6 h-6 rounded-full bg-primary border-2 border-white shadow-md z-10 flex items-center justify-center text-[9px] text-white font-bold">
+            <div className="relative z-10 grid h-8 w-8 place-items-center rounded-full border-2 border-[#0c2630] bg-white text-xs font-bold text-primary shadow-lg">
               •
             </div>
-
           </div>
 
-          {/* Details */}
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="p-3 rounded-2xl bg-neutral-50/70 dark:bg-neutral-800/70 border border-primary shadow-xs">
-              <span className="text-neutral-400 dark:text-neutral-500 block text-[11px]">Qibla Angle</span>
-              <span className="text-xl font-bold font-mono text-primary">
+          <div className="mt-5 grid grid-cols-2 divide-x divide-muted-border border-y border-muted-border py-4 text-center">
+            <div className="px-3">
+              <span className="block text-[0.68rem] text-foreground/45">Qibla angle</span>
+              <strong className="mt-1 block font-mono text-xl font-semibold tracking-[-0.04em] text-foreground" dir="ltr">
                 {angle}° {cardinal}
-              </span>
+              </strong>
             </div>
-            <div className="p-3 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
-              <span className="text-neutral-400 dark:text-neutral-500 block text-[11px]">Distance to Kaaba</span>
-              <span className="text-xl font-bold font-mono text-primary">
+            <div className="px-3">
+              <span className="block text-[0.68rem] text-foreground/45">Distance to Makkah</span>
+              <strong className="mt-1 block font-mono text-xl font-semibold tracking-[-0.04em] text-foreground" dir="ltr">
                 {distanceKm.toLocaleString()} km
-              </span>
+              </strong>
             </div>
           </div>
 
-          <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-            Face <strong className="text-primary">{angle}° {cardinal}</strong> from True North to orient toward the Sacred Sanctuary (Al-Masjid Al-Haram in Makkah).
-          </p>
-
+          <div className="mt-4 flex items-start gap-2.5 text-xs leading-5 text-foreground/52">
+            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            <p>
+              Turn <strong className="font-semibold text-foreground/75">{angle}° {cardinal}</strong> from true north toward the Kaaba.
+            </p>
+          </div>
         </div>
 
-        {/* Footer */}
-        <div className="p-3 bg-neutral-50 dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700 shrink-0">
-          <button
-            onClick={onClose}
-            className="w-full py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold transition-all shadow-xs"
-          >
-            Close Compass
+        <div className="modal-footer">
+          <button id="btn-close-qibla-footer" type="button" onClick={onClose} className="primary-button w-full">
+            Close compass
           </button>
         </div>
-
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import {
   CalendarDays,
   Volume2,
   Square,
+  Play,
 } from 'lucide-react';
 import { CurrentPrayerStatus, LocationItem } from '../types';
 import { FIXED_UTC_OFFSET_MINUTES, PRAYER_DISPLAY_NAMES } from '../services/prayerService';
@@ -36,9 +37,6 @@ interface HeroCurrentPrayerProps {
 }
 
 function formatCurrentTime(date: Date, timezone?: string): { time: string; period: string } {
-  // Morocco (Casablanca/El Aaiun) is pinned to UTC+00:00 — same fix as
-  // formatPrayerTime — so stale browser tzdata showing UTC+01:00 can't make
-  // the clock run 1 hour ahead of the displayed prayer times.
   const fixedOffset = timezone ? FIXED_UTC_OFFSET_MINUTES[timezone] : undefined;
   const targetDate = fixedOffset !== undefined
     ? new Date(date.getTime() + fixedOffset * 60000)
@@ -53,21 +51,21 @@ function formatCurrentTime(date: Date, timezone?: string): { time: string; perio
       hour12: true,
       ...(timeZone ? { timeZone } : {}),
     }).formatToParts(targetDate);
-    const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
-    const time = `${get('hour')}:${get('minute')}:${get('second')}`;
-    const period = get('dayPeriod');
-    return { time, period };
+    const get = (type: string) => parts.find((part) => part.type === type)?.value ?? '';
+    return {
+      time: `${get('hour')}:${get('minute')}:${get('second')}`,
+      period: get('dayPeriod'),
+    };
   } catch {
-    // Fallback: derive wall-clock fields from the fixed offset directly.
     const shifted = fixedOffset !== undefined
       ? new Date(date.getTime() + fixedOffset * 60000)
       : date;
-    const pad = (n: number) => String(n).padStart(2, '0');
-    const h24 = shifted.getUTCHours();
-    const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+    const pad = (value: number) => String(value).padStart(2, '0');
+    const hour24 = shifted.getUTCHours();
+    const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
     return {
-      time: `${pad(h12)}:${pad(shifted.getUTCMinutes())}:${pad(shifted.getUTCSeconds())}`,
-      period: h24 >= 12 ? 'PM' : 'AM',
+      time: `${pad(hour12)}:${pad(shifted.getUTCMinutes())}:${pad(shifted.getUTCSeconds())}`,
+      period: hour24 >= 12 ? 'PM' : 'AM',
     };
   }
 }
@@ -81,7 +79,7 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
   currentTime: currentTimeProp,
   isAudioPlaying,
   onStopAudio,
-  onTestAdhan: _onTestAdhan,
+  onTestAdhan,
   onOpenQibla,
   qiblaAngle,
   qiblaCardinal,
@@ -92,7 +90,6 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
   const hijriDisplay =
     language === 'ar' ? hijriDate?.formattedAr ?? hijriFormatted : hijriDate?.formatted ?? hijriFormatted;
 
-  // Live clock fallback when parent doesn't pass currentTime
   const [internalNow, setInternalNow] = useState(() => new Date());
   useEffect(() => {
     if (currentTimeProp) return;
@@ -105,189 +102,153 @@ export const HeroCurrentPrayer: React.FC<HeroCurrentPrayerProps> = ({
     () => formatCurrentTime(now, location.timezone),
     [now, location.timezone]
   );
+
   const nextPrayerMeta = PRAYER_DISPLAY_NAMES[status.nextPrayer] || {
     en: status.nextDisplayName,
     ar: '',
     meaning: '',
   };
-
-  const currentPrayerMeta = status.currentPrayer !== 'none' ? PRAYER_DISPLAY_NAMES[status.currentPrayer] : null;
-
+  const currentPrayerMeta = status.currentPrayer !== 'none'
+    ? PRAYER_DISPLAY_NAMES[status.currentPrayer]
+    : null;
   const currentPrayerLabel = currentPrayerMeta
     ? (language === 'ar' ? currentPrayerMeta.ar : currentPrayerMeta.en)
     : status.currentDisplayName;
-
   const nextPrayerTitle = language === 'ar' ? nextPrayerMeta.ar : nextPrayerMeta.en;
   const nextPrayerSecondary = language === 'ar' ? nextPrayerMeta.en : nextPrayerMeta.ar;
+  const progress = Math.max(0, Math.min(100, status.progressPercent));
+  const orbitBackground = `repeating-conic-gradient(from -90deg, rgba(236, 244, 239, 0.28) 0deg 0.55deg, transparent 0.55deg 7.5deg), conic-gradient(from -90deg, #c8a35b 0deg ${progress * 3.6}deg, rgba(236, 244, 239, 0.11) ${progress * 3.6}deg 360deg)`;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-neutral-50 border border-neutral-200/80 p-6 sm:p-8 text-neutral-900 shadow-sm transition-all dark:bg-neutral-900 dark:border-neutral-700/80 dark:text-neutral-100">
-      {/* Decorative subtle background ambient tint matching #79697B */}
-      <div
-        className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 rounded-full opacity-[0.06] blur-3xl"
-        style={{ backgroundColor: 'var(--color-primary)' }}
-      />
+    <section className="celestial-hero px-5 py-6 sm:px-8 sm:py-8 lg:px-10" aria-labelledby="next-prayer-title">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            id="btn-hero-location-badge"
+            type="button"
+            onClick={onOpenLocationModal}
+            className="hero-location"
+            title={t.clickToChangeCity}
+          >
+            <MapPin className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+            <span className="truncate">{location.name}, {location.country}</span>
+          </button>
+          <div className="hero-meta px-1">
+            <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{hijriDisplay}</span>
+          </div>
+        </div>
 
-      <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <button
+          id="btn-hero-qibla-badge"
+          type="button"
+          onClick={onOpenQibla}
+          className="hero-location hidden sm:inline-flex"
+          title={t.clickToViewQibla}
+        >
+          <Compass className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+          <span>{t.qibla}: {qiblaCardinal}, {qiblaAngle}°</span>
+        </button>
+      </div>
 
-        {/* Left column: Location & Date & Next Prayer info */}
-        <div className="space-y-4 max-w-xl flex-1">
-
-          {/* Location & Hijri badges (shadcn badge styling) */}
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <button
-              id="btn-hero-location-badge"
-              onClick={onOpenLocationModal}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-neutral-100 hover:bg-neutral-200/80 border border-neutral-200/80 text-neutral-700 hover:text-neutral-900 font-medium transition-all group shadow-2xs dark:bg-neutral-800 dark:hover:bg-neutral-700/80 dark:border-neutral-700/80 dark:text-neutral-300 dark:hover:text-neutral-100"
-              title={t.clickToChangeCity}
-            >
-              <MapPin className="w-3.5 h-3.5 text-neutral-500 group-hover:scale-105 transition-transform dark:text-neutral-400" />
-              <span>{location.name}, {location.country}</span>
-              <span
-                className="text-[10px] px-1.5 py-0.5 rounded text-white font-semibold transition-colors"
-                style={{ backgroundColor: 'var(--color-primary)' }}
-              >
-                {t.changeLocation}
-              </span>
-            </button>
-
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-neutral-50 border border-neutral-200/80 text-neutral-600 shadow-2xs font-medium dark:bg-neutral-800 dark:border-neutral-700/80 dark:text-neutral-300">
-              <CalendarDays className="w-3.5 h-3.5 text-neutral-400 dark:text-neutral-500" />
-              {hijriDisplay}
-            </span>
-
-            <button
-              id="btn-hero-qibla-badge"
-              onClick={onOpenQibla}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-neutral-600 hover:text-neutral-900 transition-colors shadow-2xs font-medium dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:border-neutral-700/80 dark:text-neutral-300 dark:hover:text-neutral-100"
-              title={t.clickToViewQibla}
-            >
-              <Compass className="w-3.5 h-3.5 text-neutral-400 dark:text-neutral-500" />
-              <span>{t.qibla}: {qiblaCardinal} ({qiblaAngle}°)</span>
-            </button>
+      <div className="relative z-10 mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14">
+        <div className="max-w-2xl">
+          <div className="mb-3 flex items-center gap-2 text-sm text-white/55">
+            <span>{t.nextPrayerIn}</span>
+            <span className="h-px w-5 bg-white/20" aria-hidden="true" />
+            <span className="font-serif text-base text-accent/85" dir="auto">{nextPrayerSecondary}</span>
           </div>
 
-          {/* Current & Next Prayer Highlight */}
-          <div className="space-y-1">
-            <div className="flex items-center gap-2.5">
-              <span className="text-xs uppercase tracking-wider font-semibold text-neutral-500 dark:text-neutral-400">
-                {t.nextPrayerIn} {location.name}
-              </span>
-              <span className="text-xs text-neutral-400 font-medium dark:text-neutral-500">
-                ({nextPrayerSecondary})
-              </span>
-            </div>
-
-            <div className="flex items-baseline gap-4 pt-0.5">
-              <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-                {nextPrayerTitle}
-              </h2>
-              <span className="text-2xl sm:text-3xl font-semibold text-neutral-600 font-mono tracking-tight dark:text-neutral-300">
-                {timeFormatted}
-              </span>
-            </div>
-
-            <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
-              {nextPrayerMeta.meaning}
-            </p>
+          <div className="flex flex-wrap items-end gap-x-5 gap-y-2">
+            <h2
+              id="next-prayer-title"
+              className="text-[clamp(3.1rem,8vw,5.8rem)] font-medium leading-[0.92] tracking-[-0.07em] text-[#f4f7f2]"
+              dir="auto"
+            >
+              {nextPrayerTitle}
+            </h2>
+            <time className="pb-1 font-mono text-xl font-medium tracking-[-0.035em] text-white/72 sm:text-2xl" dir="ltr">
+              {timeFormatted}
+            </time>
           </div>
 
-          {/* Progress Bar through prayer window */}
-          <div className="space-y-2 pt-2">
-            <div className="flex justify-between text-xs text-neutral-500 font-medium dark:text-neutral-400">
-              <span>{t.current}: {currentPrayerLabel}</span>
-              <span>{t.next}: {nextPrayerTitle}</span>
+          <p className="mt-4 max-w-xl text-sm leading-6 text-white/54 sm:text-[0.95rem]">
+            {nextPrayerMeta.meaning}
+          </p>
+
+          <div className="hero-window mt-7 rounded-[0.45rem_0.45rem_1rem_1rem] px-4 py-3.5 sm:px-5">
+            <div className="flex items-center justify-between gap-4 text-[0.72rem] text-white/55">
+              <span>{t.current}: <strong className="font-semibold text-white/86">{currentPrayerLabel}</strong></span>
+              <span>{t.next}: <strong className="font-semibold text-white/86">{nextPrayerTitle}</strong></span>
             </div>
-            <div className="h-2 w-full rounded-full bg-neutral-100 border border-neutral-200/80 overflow-hidden dark:bg-neutral-800 dark:border-neutral-700/80">
+            <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
               <div
-                className="h-full rounded-full transition-all duration-1000 ease-out"
-                style={{
-                  width: `${Math.max(5, status.progressPercent)}%`,
-                  backgroundColor: 'var(--color-primary)'
-                }}
+                className="h-full rounded-full bg-accent transition-[width] duration-1000 ease-out"
+                style={{ width: `${Math.max(2, progress)}%` }}
               />
             </div>
           </div>
         </div>
 
-        {/* Right column: Large Countdown Timer Card & Quick Adhan Control */}
-        <div className="flex flex-col items-center sm:items-end justify-center">
-          <div className="w-full sm:w-72 p-5 sm:p-6 rounded-xl bg-neutral-50/80 border border-neutral-200/80 shadow-xs flex flex-col items-center text-center dark:bg-neutral-800/80 dark:border-neutral-700/80">
-
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-              {t.timeRemaining}
-            </span>
-
-            {/* Large Countdown display */}
-            <div
-              className="my-2 font-mono text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900 tabular-nums dark:text-neutral-100"
-              dir="ltr"
-            >
-              {status.timeRemainingFormatted}
-            </div>
-
-            {/* Current time — lives inside the same Time Remaining card */}
-            <div className="mt-1 w-full rounded-lg border border-neutral-200/80 bg-white/70 px-3 py-2.5 text-start shadow-2xs dark:border-neutral-700/80 dark:bg-neutral-900/70">
-              <div className="flex items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                  <Clock
-                    className="w-3.5 h-3.5"
-                    style={{ color: 'var(--color-primary)' }}
-                  />
-                  {t.currentTime}
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                  <span className="relative flex h-2 w-2">
-                    <span
-                      className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60"
-                      style={{ backgroundColor: 'var(--color-primary)' }}
-                    />
-                    <span
-                      className="relative inline-flex rounded-full h-2 w-2"
-                      style={{ backgroundColor: 'var(--color-primary)' }}
-                    />
-                  </span>
+        <div className="flex flex-col items-center lg:pe-3">
+          <div
+            className="countdown-orbit"
+            style={{ background: orbitBackground }}
+            aria-label={`${t.timeRemaining}: ${status.timeRemainingFormatted}`}
+          >
+            <div className="orbit-core">
+              <span className="text-[0.68rem] font-medium text-white/48">{t.timeRemaining}</span>
+              <div className="countdown-value my-3 text-white" dir="ltr" aria-live="off">
+                {status.timeRemainingFormatted}
+              </div>
+              <div className="flex items-center gap-1.5 text-[0.67rem] text-white/45">
+                <Clock className="h-3 w-3 text-accent" aria-hidden="true" />
+                <span className="font-mono tabular-nums" dir="ltr">{currentTimeFormatted}</span>
+                <span>{currentTimePeriod}</span>
+                <span className="ms-1 inline-flex items-center gap-1 text-[#8ac8bd]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#78beb2]" aria-hidden="true" />
                   {t.live}
                 </span>
               </div>
-
-              <div className="mt-1 flex items-baseline justify-between gap-2" dir="ltr">
-                <span className="font-mono text-xl font-bold tracking-tight text-neutral-900 tabular-nums dark:text-neutral-100">
-                  {currentTimeFormatted}
-                </span>
-                <span className="font-mono text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-                  {currentTimePeriod}
-                </span>
-              </div>
             </div>
+          </div>
 
-            {/* Audio State / Action Buttons */}
-            {isAudioPlaying && (
-              <div className="mt-3 flex items-center gap-2">
+          <div className="mt-5 flex min-h-10 flex-col items-center justify-center gap-2">
+            {isAudioPlaying ? (
+              <>
                 <button
                   id="btn-hero-stop-audio"
+                  type="button"
                   onClick={onStopAudio}
-                  className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-medium shadow-xs transition-all animate-pulse"
+                  className="inline-flex items-center gap-2 rounded-[0.65rem] border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/15"
                 >
-                  <Square className="w-3.5 h-3.5 fill-current" />
+                  <Square className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
                   {t.stopAdhan}
                 </button>
-              </div>
+                <div className="flex h-5 items-center justify-center gap-1" aria-label={t.adhanPlaying}>
+                  {[0.45, 1, 0.65, 0.85, 0.4, 0.72, 0.32].map((height, index) => (
+                    <span
+                      key={index}
+                      className="sound-bar"
+                      style={{ height: `${height * 100}%`, animationDelay: `${index * 85}ms` }}
+                    />
+                  ))}
+                  <span className="sr-only"><Volume2 className="h-3 w-3" />{t.adhanPlaying}</span>
+                </div>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={onTestAdhan}
+                className="inline-flex items-center gap-2 rounded-[0.65rem] border border-white/12 bg-white/[0.055] px-3.5 py-2 text-xs font-semibold text-white/72 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <Play className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+                Preview adhan
+              </button>
             )}
-
-            {isAudioPlaying && (
-              <div className="mt-2 flex items-center gap-1.5 text-[11px] text-neutral-600 font-medium dark:text-neutral-300">
-                <Volume2 className="w-3.5 h-3.5 text-neutral-500 animate-bounce dark:text-neutral-400" />
-                {t.adhanPlaying}
-              </div>
-            )}
-
           </div>
         </div>
-
       </div>
-
-    </div>
+    </section>
   );
 };
-

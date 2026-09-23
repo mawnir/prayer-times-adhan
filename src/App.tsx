@@ -25,6 +25,7 @@ import { CalculationSettingsModal } from './components/CalculationSettingsModal'
 import { ActiveAdhanModal } from './components/ActiveAdhanModal';
 import { QiblaModal } from './components/QiblaModal';
 import { Mosque } from 'lucide-react';
+import { useLanguage } from './context/LanguageContext';
 
 const DEFAULT_CALCULATION_SETTINGS: CalculationSettings = {
   method: 'MuslimWorldLeague',
@@ -56,6 +57,8 @@ const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
 };
 
 export default function App() {
+  const { t } = useLanguage();
+
   // 1. Locations State
   const [locations, setLocations] = useState<LocationItem[]>(() => {
     try {
@@ -292,9 +295,7 @@ export default function App() {
   }, [prayerStatus.nextPrayerTime, calculationSettings.timeFormat, activeLocation.timezone]);
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans selection:bg-black selection:text-white dark:bg-neutral-950 dark:text-neutral-100 dark:selection:bg-white dark:selection:text-neutral-900">
-
-      {/* Top Application Header */}
+    <div className="app-shell flex min-h-screen flex-col font-sans text-foreground">
       <Header
         activeLocation={activeLocation}
         locations={locations}
@@ -307,11 +308,8 @@ export default function App() {
         onToggleMute={handleToggleMute}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
-
-        {/* Hero Banner: Active/Next Prayer & Live Countdown Timer */}
-        {todaySchedule && (
+      <main className="mx-auto w-full max-w-7xl flex-1 space-y-7 px-4 py-5 sm:space-y-9 sm:px-6 sm:py-7 lg:px-8 lg:py-8">
+        {todaySchedule ? (
           <HeroCurrentPrayer
             location={activeLocation}
             status={prayerStatus}
@@ -327,58 +325,38 @@ export default function App() {
             qiblaCardinal={qibla.cardinal}
             onOpenLocationModal={() => setIsLocationModalOpen(true)}
           />
-        )}
+        ) : null}
 
-        {/* View: Complete 7-Day / Next Week Schedule */}
         <WeekScheduleView
           schedule={weekSchedule}
           location={activeLocation}
           timeFormat={calculationSettings.timeFormat}
           timezone={activeLocation.timezone}
         />
-
       </main>
 
-      {/* Elegant Footer */}
-      <footer className="border-t border-neutral-200/80 bg-white py-6 text-xs text-neutral-500 dark:border-neutral-700/80 dark:bg-neutral-950 dark:text-neutral-400">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <div 
-              className="w-5 h-5 shrink-0 rounded-md flex items-center justify-center shadow-xs"
-              style={{ backgroundColor: 'var(--color-primary)' }}
-            >
-              <Mosque size={13} className="text-white" />
-            </div>
-            <span className="font-semibold text-neutral-900 dark:text-neutral-100">Prayer Times &amp; Adhan</span>
-            <span>&bull; Multiple Locations &bull; 7-Day Schedule</span>
+      <footer className="app-footer mt-auto py-5 text-xs text-foreground/50">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+          <div className="flex items-center gap-2">
+            <span className="grid h-6 w-6 place-items-center rounded-md bg-primary text-white">
+              <Mosque className="h-3.5 w-3.5" aria-hidden="true" />
+            </span>
+            <span className="font-semibold text-foreground/80">Prayer Times &amp; Adhan</span>
           </div>
-
-          <div className="flex items-center space-x-4 rtl:space-x-reverse">
-            <button
-              onClick={() => setIsSettingsModalOpen(true)}
-              className="hover:text-neutral-900 underline transition-colors dark:hover:text-neutral-100"
-            >
-              Calculation: {calculationSettings.method}
+          <nav className="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Settings">
+            <button type="button" onClick={() => setIsSettingsModalOpen(true)} className="footer-link">
+              {t.calculationSettings}
             </button>
-            <span>&bull;</span>
-            <button
-              onClick={() => setIsNotificationModalOpen(true)}
-              className="hover:text-neutral-900 underline transition-colors dark:hover:text-neutral-100"
-            >
-              Adhan Notifications
+            <button type="button" onClick={() => setIsNotificationModalOpen(true)} className="footer-link">
+              {t.notificationSettings}
             </button>
-            <span>&bull;</span>
-            <button
-              onClick={() => setIsLocationModalOpen(true)}
-              className="hover:text-neutral-900 underline transition-colors dark:hover:text-neutral-100"
-            >
-              Manage Cities
+            <button type="button" onClick={() => setIsLocationModalOpen(true)} className="footer-link">
+              {t.manageCities}
             </button>
-          </div>
+          </nav>
         </div>
       </footer>
 
-      {/* Modals & Drawers */}
       <LocationManagerModal
         isOpen={isLocationModalOpen}
         onClose={() => setIsLocationModalOpen(false)}
@@ -420,7 +398,6 @@ export default function App() {
         onClose={() => setIsQiblaModalOpen(false)}
         location={activeLocation}
       />
-
     </div>
   );
 }
