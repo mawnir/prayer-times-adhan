@@ -28,7 +28,7 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
 }) => {
   const { language, t } = useLanguage();
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
-  const [subView, setSubView] = useState<'table' | 'cards'>('table');
+  const [subView, setSubView] = useState<'table' | 'cards'>('cards');
 
   if (!schedule?.length) {
     return (
@@ -38,7 +38,9 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
     );
   }
 
-  const selectedDay = schedule[selectedDayIndex] || schedule[0];
+  // Show today and the following six days in the schedule UI.
+  const visibleSchedule = schedule.slice(0, 7);
+  const selectedDay = visibleSchedule[selectedDayIndex] || visibleSchedule[0];
   const fajrMs = selectedDay.prayers.fajr.getTime();
   const maghribMs = selectedDay.prayers.maghrib.getTime();
   const fastingHours = ((maghribMs - fajrMs) / 3600000).toFixed(1);
@@ -87,7 +89,7 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
       </div>
 
       <div className="schedule-rail scrollbar-none" role="tablist" aria-label="Choose a day">
-        {schedule.map((day, index) => {
+        {visibleSchedule.map((day, index) => {
           const isSelected = index === selectedDayIndex;
           return (
             <button
@@ -134,7 +136,7 @@ export const WeekScheduleView: React.FC<WeekScheduleViewProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {schedule.map((day, index) => {
+                {visibleSchedule.map((day, index) => {
                   const isSelected = index === selectedDayIndex;
                   const fastingWindow = ((day.prayers.maghrib.getTime() - day.prayers.fajr.getTime()) / 3600000).toFixed(1);
                   const selectDay = () => setSelectedDayIndex(index);
