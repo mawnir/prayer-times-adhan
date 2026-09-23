@@ -11,7 +11,6 @@ import { INITIAL_USER_LOCATIONS } from './data/defaultLocations';
 import {
   calculateWeekSchedule,
   getCurrentPrayerStatus,
-  getQiblaInfo,
   formatPrayerTime
 } from './services/prayerService';
 import { audioService } from './services/audioService';
@@ -281,11 +280,6 @@ export default function App() {
     );
   };
 
-  // Qibla Info
-  const qibla = useMemo(() => {
-    return getQiblaInfo(activeLocation);
-  }, [activeLocation]);
-
   const formattedNextPrayerTime = useMemo(() => {
     return formatPrayerTime(
       prayerStatus.nextPrayerTime,
@@ -303,7 +297,6 @@ export default function App() {
         onOpenLocationModal={() => setIsLocationModalOpen(true)}
         onOpenNotificationModal={() => setIsNotificationModalOpen(true)}
         onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
-        onOpenQiblaModal={() => setIsQiblaModalOpen(true)}
         notificationSettings={notificationSettings}
         onToggleMute={handleToggleMute}
       />
@@ -313,17 +306,12 @@ export default function App() {
           <HeroCurrentPrayer
             location={activeLocation}
             status={prayerStatus}
-            hijriFormatted={todaySchedule.hijriDate.formatted}
-            hijriDate={todaySchedule.hijriDate}
             timeFormatted={formattedNextPrayerTime}
             currentTime={currentTime}
             isAudioPlaying={isAudioPlaying}
             onStopAudio={handleStopAudio}
-            onTestAdhan={handleTestAdhan}
-            onOpenQibla={() => setIsQiblaModalOpen(true)}
-            qiblaAngle={qibla.angle}
-            qiblaCardinal={qibla.cardinal}
             onOpenLocationModal={() => setIsLocationModalOpen(true)}
+            onOpenQiblaModal={() => setIsQiblaModalOpen(true)}
           />
         ) : null}
 

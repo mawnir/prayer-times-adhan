@@ -3,7 +3,6 @@ import {
   MapPin,
   Bell,
   Settings,
-  Compass,
   Volume2,
   VolumeX,
   Globe,
@@ -23,7 +22,6 @@ interface HeaderProps {
   onOpenLocationModal: () => void;
   onOpenNotificationModal: () => void;
   onOpenSettingsModal: () => void;
-  onOpenQiblaModal: () => void;
   notificationSettings: NotificationSettings;
   onToggleMute: () => void;
 }
@@ -35,7 +33,6 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenLocationModal,
   onOpenNotificationModal,
   onOpenSettingsModal,
-  onOpenQiblaModal,
   notificationSettings,
   onToggleMute,
 }) => {
@@ -157,17 +154,6 @@ export const Header: React.FC<HeaderProps> = ({
             aria-hidden="true"
           />
         )}
-      </button>
-
-      <button
-        id={`btn-qibla-compass-${idSuffix}`}
-        type="button"
-        onClick={onOpenQiblaModal}
-        className="utility-button h-9 w-9 max-[419px]:hidden"
-        title={t.qiblaCompass}
-        aria-label={t.qiblaCompass}
-      >
-        <Compass className="h-4 w-4" aria-hidden="true" />
       </button>
 
       <button
