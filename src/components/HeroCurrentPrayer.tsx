@@ -77,7 +77,7 @@ export const HeroCurrentPrayer: FC<HeroCurrentPrayerProps> = ({
   const countdown = formatCountdown(status.secondsRemaining, language);
   const progress = Math.max(0, Math.min(100, status.progressPercent));
   const progressDegrees = progress * 3.6;
-  const orbitBackground = `repeating-conic-gradient(from -90deg, rgba(236,244,239,.28) 0deg .55deg, transparent .55deg 7.5deg), conic-gradient(from -90deg, #c8a35b 0deg ${progressDegrees}deg, rgba(236,244,239,.11) ${progressDegrees}deg 360deg)`;
+  const orbitBackground = `conic-gradient(from -90deg, var(--color-accent) 0deg ${progressDegrees}deg, rgba(213,181,111,.12) ${progressDegrees}deg 360deg)`;
   const currentPrayerBackground = PRAYER_BACKGROUNDS[
     status.currentPrayer === 'none' ? 'fajr' : status.currentPrayer
   ];
@@ -173,20 +173,20 @@ export const HeroCurrentPrayer: FC<HeroCurrentPrayerProps> = ({
           aria-label={`${t.timeRemaining}: ${countdown}`}
         >
           <div className="orbit-core">
-            <span className="text-[0.68rem] font-medium text-white/48">{t.timeRemaining}</span>
+            <span className="countdown-label">{t.timeRemaining}</span>
             <time
-              className="countdown-value my-3 max-w-full whitespace-nowrap px-1 text-center text-[clamp(1.35rem,3.5vw,2.1rem)] tracking-[-0.04em] text-white"
+              className="countdown-value my-2.5 max-w-full whitespace-nowrap px-1 text-center"
               dateTime={status.nextPrayerTime.toISOString()}
               dir={language === 'ar' ? 'rtl' : 'ltr'}
               aria-live="off"
             >
               {countdown}
             </time>
-            <span className="flex items-center gap-1.5 text-[0.67rem] text-white/45">
-              <Clock className="h-3 w-3 text-accent" aria-hidden="true" />
-              <span className="font-mono tabular-nums" dir="ltr">{localTime}</span>
-              <span className="ms-1 inline-flex items-center gap-1 text-[#8ac8bd]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#78beb2]" aria-hidden="true" />
+            <span className="countdown-meta flex items-center gap-1.5">
+              <Clock className="h-3 w-3" aria-hidden="true" />
+              <span className="countdown-local-time font-mono tabular-nums" dir="ltr">{localTime}</span>
+              <span className="ms-1 inline-flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full" aria-hidden="true" />
                 {t.live}
               </span>
             </span>
