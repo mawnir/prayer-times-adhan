@@ -334,12 +334,12 @@
   }
 
   .countdown-value {
-    color: #fff7e6;
+    color: #fcd98dff;
     font-family: var(--font-mono);
-    font-size: clamp(1.65rem, 3.2vw, 2.3rem);
+    font-size: clamp(1.3rem, 2.2vw, 1.8rem);
     font-variation-settings: "wght" 600;
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.055em;
+    letter-spacing: -0.075em;
     line-height: 1;
   }
 
