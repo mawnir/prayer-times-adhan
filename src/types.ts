@@ -53,7 +53,8 @@ export type CalculationMethodKey =
   | 'Qatar'
   | 'Singapore'
   | 'Tehran'
-  | 'Turkey';
+  | 'Turkey'
+  | 'Habous';
 
 export type MadhabKey = 'shafi' | 'hanafi';
 

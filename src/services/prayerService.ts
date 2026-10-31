@@ -69,6 +69,17 @@ export function getCalculationParameters(settings: CalculationSettings): Calcula
     case 'Turkey':
       params = CalculationMethod.Turkey();
       break;
+    case 'Habous':
+      // Morocco's official local calculation, performed by the Ministry of
+      // Habous: Fajr at 18° and Isha at 17° below the horizon. Maghrib is
+      // derived from the sun's position, Asr follows the selected madhab and
+      // high latitude handling follows the selected high latitude rule.
+      params = new CalculationParameters('Other', 18, 17);
+      params.methodAdjustments = {
+        ...params.methodAdjustments,
+        dhuhr: 1,
+      };
+      break;
     default:
       params = CalculationMethod.MuslimWorldLeague();
   }

@@ -62,6 +62,10 @@ const CALCULATION_METHOD_TEXT: Record<CalculationMethodKey, { label: LocalizedTe
     label: { en: 'Institute of Geophysics, Tehran', ar: 'معهد الجيوفيزياء، طهران' },
     description: { en: 'Leva Institute method', ar: 'طريقة معهد ليفا' },
   },
+  Habous: {
+    label: { en: 'Morocco (Habous)', ar: 'المغرب' },
+    description: { en: 'Official local calculation for Morocco', ar: 'الحساب المحلي الرسمي للمغرب' },
+  },
 };
 
 const OFFSET_CONTROL_LABELS = {
